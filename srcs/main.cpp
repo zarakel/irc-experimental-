@@ -40,6 +40,11 @@ int main(int argc, char **argv)
 			return ( 1 );
 		//Server server(av[1] av[2]);
 		//connecter au server server.connect();
+		// - Initializes commands
+		// - Creates server socket
+		// - Binds the server socket
+		// - Makes it listen
+		// - Initilizes the file descriptors structure
 	}
 	catch (const std::exception & e) {
 		std::cerr << "exception found: " << e.what() << std::endl;
