@@ -27,18 +27,19 @@ int	parser( int argc, char **argv)
 	return ( port );
 }
 
-
 int main(int argc, char **argv)
 {
 
     int m;
 
-	//Server	server;
+	//Server	server;  pas encore faire class Server 
 
 	try {
         m = parser( argc, argv);
 		if (m == -1)
 			return ( 1 );
+		//Server server(av[1] av[2]);
+		//connecter au server server.connect();
 	}
 	catch (const std::exception & e) {
 		std::cerr << "exception found: " << e.what() << std::endl;
