@@ -1,7 +1,5 @@
 #include "../headers/headers.hpp"
 
-
-
 bool isNumber(const std::string s)
 {
     std::string::const_iterator it = s.begin();
@@ -9,10 +7,10 @@ bool isNumber(const std::string s)
     return !s.empty() && it == s.end();
 }
 
-map<string, string> parser( int argc, char **argv)
+std::map<std::string, std::string> parser( int argc, char **argv)
 {
 
-	map<string, string> word;
+	std::map<std::string, std::string> word;
 
 	if ( argc != 3 ) {
 		throw errorExcute("Usage: ./ircserv <port> <password> \n");
@@ -29,7 +27,7 @@ map<string, string> parser( int argc, char **argv)
 int main(int argc, char **argv)
 {
 
-    map<string, string> m;
+    std::map<std::string, std::string> m;
 
 	//Server	server;
 

@@ -2,7 +2,7 @@
 # include "headers.hpp"
 
 
-class errorExcute : public exception {
+class errorExcute : public std::exception {
 
     private:
         const char * _strerror;
