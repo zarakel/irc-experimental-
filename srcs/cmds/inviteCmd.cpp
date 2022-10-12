@@ -36,6 +36,10 @@ INVITE Wiz #Twilight_Zone ;
 
 void    invite(User &user, Server &server, std::vector<std::string> args)
 {
+
+    Channel*    channel;
+    User*       guest;
+
 	if (!user.isRegistered())
 		return ;
 	if (args.size() < 2)

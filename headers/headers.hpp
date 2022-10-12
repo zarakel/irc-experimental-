@@ -1,7 +1,7 @@
 #ifndef HEADERS_HPP
 # define HEADERS_HPP
 
-//using namespace std;
+using namespace std;
 
 #include <exception>
 #include <string.h>
