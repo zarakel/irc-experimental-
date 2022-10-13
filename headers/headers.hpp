@@ -9,8 +9,8 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
-
-
+#include <stdlib.h>
+#include <errno.h>
 # include <vector>
 # include <sstream>
 # include <iterator>
@@ -24,9 +24,8 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <arpa/inet.h>
+# include <sys/wait.h>
 # include <netdb.h>
-# include <stdio.h>
-# include <stdlib.h>
 # include <stdint.h>
 # include <signal.h>
 # include <fcntl.h>
