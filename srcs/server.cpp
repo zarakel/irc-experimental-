@@ -1,4 +1,7 @@
 #include "../headers/headers.hpp" 
+#include "cmds/passCmd.cpp"
+#include "cmds/nickCmd.cpp"
+#include "parse_message.cpp"
 
 #define BACKLOG 10   // how many pending connections queue will hold
 
@@ -34,6 +37,7 @@ int server(char *PORT, std::string pass)
     int yes=1;
     char s[INET6_ADDRSTRLEN];
     int rv;
+	int count = 0;
 
     std::cout << "Le pass est censé être : " << pass << std::endl;
 
@@ -42,7 +46,7 @@ int server(char *PORT, std::string pass)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE; // use my IP
     memset(&popoll, 0, sizeof popoll);
-    popoll.events = POLLRDBAND;
+    popoll.events = POLLIN;
 
     if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -107,40 +111,29 @@ int server(char *PORT, std::string pass)
             s, sizeof s);
         printf("server: got connection from %s\n", s);
 	popoll.fd = new_fd;
-//	probleme : je n'arrive pas a envoyer des signaux, soit parce que poll marche pas bien , soit parce qu'il faut coder les signaux
-	if (poll(&popoll, 1, 100) == 1)
+//	probleme : je ne suis pas sur de reussir a vraiment réaliser le test du pdf,     	a tester ! 
+//	probleme 2 : j'utilise poll en mode bloquant, ca n'a pas l'air de correspondre a  l'exercice. Je peux regler ca mais est-ce optimal ?  
+	std::cout << "(Bienvenue sur le serveur, veuillez taper votre pass.)" << std::endl;
+	if (poll(&popoll, 1, 10000000) == 1) 
 	{
-	    char buf[9999];
-	    if (recv(new_fd, buf, 9999, 0) == - 1)
-                perror("recv");
-	    for (int it = 0; buf[it] != '\n'; it++)
+	    try
 	    {
-		if (buf[it + 1] == '\n')
-		{
-			buf[it + 1] = '\0';
-			break;
-		}
-			
+//		l'ensemble de l'authentificattion est a faire avec pass et nick 
+	        receive_message(popoll.fd, pass);
+// avoir un vector avec toutes les commandes accessibles aux clients non enregistrés		puis comparé chaque membre du vector avec ce qui est recu de recv()
+// il faut être capable de determiner si le client est connu ou pas
+// sachant qu'on allumera et eteindra le serveur, chaque allumage ne contiendra aucune 	   info
+				
 	    }
-	   // if (strncmp(buf, pass, 4) == 0)
-	    if (pass.compare(buf) == 0)
+	    catch (const std::exception & e)
 	    {
-            	if (send(new_fd, "You're authorized !\n\r", 21, 0) == -1)
-                perror("send");
-	    }
-	    else
-	    {
-            	if (send(new_fd, "Casse toi pov' con !\n\r", 22, 0) == -1)
-                	perror("send");
-          	close(new_fd);
-	  	close(popoll.fd);
-		exit(1);
+		std::cerr << s << e.what() << std::endl;
+		return (464);
 	    }
             close(new_fd);
 	    close(popoll.fd);
 	}
     }
-
     return 0;
 }
 
