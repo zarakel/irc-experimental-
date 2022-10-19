@@ -31,9 +31,6 @@
 # include <fcntl.h>
 # include <poll.h>
 
-
-
-#include "error.hpp"
-
+# include "error.hpp"
 
 #endif

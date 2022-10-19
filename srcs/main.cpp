@@ -1,6 +1,7 @@
+#include "../headers/Stock.hpp"
 #include "../headers/headers.hpp"
 #include <cstdlib>
-#include "server.cpp"
+#include "../headers/Server.hpp"
 
 bool isNumber(const std::string s)
 {
@@ -33,18 +34,20 @@ char	*check_port( char *port )
 int main(int argc, char **argv)
 {
 
-	char		*port; //je trouve que c'est plus simple sans map
-	std::string	pass; //moins de nommage, 2 trucs c'est peu pour map
+//	char		*port; //je trouve que c'est plus simple sans map
+//	std::string	pass; //moins de nommage, 2 trucs c'est peu pour map
 
 // On verfie qu'on est assez d'arguments, que l'argv1, le port, n'est pas de 
 // lettre, puis on les stocks 
 
+	Stock Stock;
+
 	try {
 	if ( argc != 3 ) 
 		throw errorExcute("Usage: ./ircserv <port> <password> \n");
-	port = check_port(argv[1]);
+	Stock.port = check_port(argv[1]);
 //      check_password(argv[2]);
-	pass = argv[2];
+	Stock.pass = argv[2];
 	}
 	catch (const std::exception & e) {
 		std::cerr << "exception found: " << e.what() << std::endl;
@@ -53,10 +56,8 @@ int main(int argc, char **argv)
 
 // l'etape d'après est la construction du serveur, m nous servira a définir 
 // le port et le mot de passe
-	server(port, pass);
+	server(&Stock);
 
-	std::cout << "Port = " << port << " && Pass = " << pass << std::endl;
-	std::cout << "coucou du main btw" << std::endl;
-
+	std::cout << "Port = " << Stock.port << " && Pass = " << Stock.pass << std::endl;
 	return (0);
 }
