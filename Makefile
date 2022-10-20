@@ -31,7 +31,7 @@ PATH_SRCS		= srcs/
 
 PATH_OBJS		= objs/
 
-HEADER_LIST		= headers.hpp
+HEADER_LIST		= headers.hpp User.hpp error.hpp
 
 SRC_LIST		= main.cpp
 

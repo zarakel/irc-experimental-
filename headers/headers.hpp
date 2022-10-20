@@ -3,14 +3,12 @@
 
 using namespace std;
 
-#include <exception>
-#include <string.h>
-#include <map>
-#include <string>
-#include <iostream>
-#include <unistd.h>
-
-
+# include <exception>
+# include <string.h>
+# include <map>
+# include <string>
+# include <iostream>
+# include <unistd.h>
 # include <vector>
 # include <sstream>
 # include <iterator>
@@ -35,6 +33,6 @@ using namespace std;
 
 
 #include "error.hpp"
-
+#include "User.hpp"
 
 #endif
