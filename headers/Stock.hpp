@@ -14,6 +14,8 @@ class Stock
 	~Stock( void );
 
 	char	*port;
+	std::vector<:x
+
 	std::vector<std::string> line;
 	std::vector<std::string> all_commands;
 	std::vector<std::string> Identity;
