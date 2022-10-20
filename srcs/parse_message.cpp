@@ -14,11 +14,13 @@ int	command_check(int poll_fd, Stock *Stock)
 	{	
 		if (Stock->line[0] == Stock->all_commands[i])  
 		{
-			if (Stock->line[1].size() > 0 && Stock->line[2] == "\0")
+			if (Stock->line[1].size() > 0 &&
+			Stock->line[2].empty() != 0)
 			{
 				if (Stock->line[0] == Stock->all_commands[0])
 					PASS(poll_fd, Stock);
-				if (Stock->line[0] == Stock->all_commands[1])
+				if (Stock->line[0] == Stock->all_commands[1]
+				&& Stock->authentified[Stock->User] == 1)
 					NICK(poll_fd, Stock);
 				return (0);
 			}
@@ -27,6 +29,7 @@ int	command_check(int poll_fd, Stock *Stock)
 				if (send(poll_fd, "Bad Param': On refait bien la, oh !\n\r", 37, 0) == -1)
 					perror("send");
 				Stock->line.clear();
+				Stock->IP_tmp.clear();
 				return (598);
 			}
 		}
@@ -35,6 +38,7 @@ int	command_check(int poll_fd, Stock *Stock)
 	if (send(poll_fd, "Bad Command: Faites un effort, voyons.\n\r", 40, 0) == -1)
 		perror("send");
 	Stock->line.clear();
+	Stock->IP_tmp.clear();Stock->IP_tmp.clear();
 	return (458);	
 }
 
@@ -47,10 +51,12 @@ int	receive_message(int poll_fd, Stock *Stock)
 	for (int it = 0; ((buf[it] != '\n' | buf[it] != '\r') && it <= 512) ; 			it++)
 	{
 		if (buf[it] == ':' && (buf[it + 1] != ' ' | buf[it + 1] != '\n'
-			| buf[it + 1] != '\r')
+			| buf[it + 1] != '\r'))
 		{
 			if (send(poll_fd, "Bad Message: Deux points, c'est zéro.\n\r", 39, 0) == -1)
 				perror("send");
+			Stock->word.clear();
+			Stock->line.clear();
 			return (12);
 		}	
 		Stock->word.push_back(buf[it]);
@@ -64,7 +70,16 @@ int	receive_message(int poll_fd, Stock *Stock)
 			if (buf[it + 2] == '\n' | buf[it + 2] == '\r')
 				break;
 		}
-		if (buf[it + 1] == '\n'| buf[it + 2] == '\r')
+		if (buf[it + 1] == ':')
+		{
+			if (send(poll_fd, "Bad Message: Deux points, c'est zéro.\n\r", 39, 0) == -1)
+				perror("send");
+			Stock->word.clear();
+			Stock->line.clear();
+			Stock->IP_tmp.clear();
+			return (11);
+		}	
+		if (buf[it + 1] == '\n' | buf[it + 1] == '\r')
 		{
 			Stock->line.push_back(Stock->word);
 			Stock->line.push_back("\0"); // NULL pour savoir quand fin vector
@@ -75,6 +90,14 @@ int	receive_message(int poll_fd, Stock *Stock)
 		}
 		else if (buf[it + 1] == '\0')
 			it += 2;
+		if (it > 512)
+		{
+			if (send(poll_fd, "Message too long: C'est plus que Levis quand même\n\r", 50, 0) == -1)
+				perror("send");
+			Stock->word.clear();
+			Stock->line.clear();
+			return (19);
+		}	
 	}
 	command_check(poll_fd, Stock);
 	return (-1);

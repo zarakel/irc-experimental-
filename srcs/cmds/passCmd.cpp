@@ -3,13 +3,21 @@
 
 int	PASS(int poll_fd, Stock *Stock)
 {
-	Stock->Identities[Stock->Identity[0]];
+	if (Stock->authentified[Stock->User] == 1)
+	{
+		if (send(poll_fd, "Bad Usage: You're already authorized !\n\r", 40, 0) == -1)
+			perror("send");
+		return(2000);
+	}
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{
 		if (send(poll_fd, "All Good: You're authorized !\n\r", 31, 0) == -1)
 			perror("send");
 //              authentification réussi, pour le pass en tout cas
 		Stock->line.clear();
+		Stock->authentified[Stock->User] = 1;
+		Stock->Identities[Stock->User].push_back(Stock->IP_tmp);
+		Stock->IP_tmp.clear();
 		return(3);
 	}
 	else
@@ -19,7 +27,7 @@ int	PASS(int poll_fd, Stock *Stock)
 		if (send(poll_fd, "Bad Password: Casse toi pov' con !\n\r", 36, 0) == -1)
 			perror("send");
 		Stock->line.clear();
-	//	close(poll_fd);
+		Stock->IP_tmp.clear();
 		return (400);
 	}	
 }

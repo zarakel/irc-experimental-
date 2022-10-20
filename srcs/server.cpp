@@ -39,7 +39,6 @@ int server(Stock *Stock)
     int rv;
 
     std::cout << "Le pass est censé être : " << Stock->pass << std::endl;
-//    std::cout << "Le port est censé être : " << Stock->port << std::endl;
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
@@ -110,7 +109,27 @@ int server(Stock *Stock)
             get_in_addr((struct sockaddr *)&their_addr),
             s, sizeof s);
         printf("server: got connection from %s\n", s);
-	Stock->Identity.push_back(s);
+	if (Stock->Identities.empty())
+		Stock->IP_tmp = s;
+	else if (Stock->Identities[Stock->User][0].compare(s) != 0)
+	{
+		for (int i = 0; i <= Stock->User; i++)
+		{
+			if (Stock->Identities[i][0].compare(s) == 0)
+			{
+				Stock->User = i;
+				std::cout << "coucou" << std::endl;
+				break;
+			}
+			else if (i == Stock->User 
+			&& Stock->Identities[i][0].compare(s) != 0)
+			{
+				Stock->User++;
+				Stock->IP_tmp.clear();
+				Stock->IP_tmp = s;
+			}
+		}
+	}	
 	popoll.fd = new_fd;
 //	probleme : je ne suis pas sur de reussir a vraiment réaliser le test du pdf,     	a tester ! 
 	std::cout << "(Bienvenue sur le serveur, veuillez taper votre pass.)" << std::endl;

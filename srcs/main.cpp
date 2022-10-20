@@ -67,10 +67,10 @@ int main(int argc, char **argv)
 	Stock.full_command["NICK"].push_back("NICK");
 	Stock.full_command["NICK"].push_back("arguement");
 
-	Stock.nick_already_set = 0;
-
-// l'etape d'après est la construction du serveur, m nous servira a définir 
-// le port et le mot de passe
+	Stock.User = 0;
+	Stock.nick_already_set[Stock.User] = 0;
+	Stock.authentified[Stock.User] = 0;
+	
 	server(&Stock);
 
 	std::cout << "Port = " << Stock.port << " && Pass = " << Stock.pass << std::endl;

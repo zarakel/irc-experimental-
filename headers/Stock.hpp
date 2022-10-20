@@ -14,16 +14,17 @@ class Stock
 	~Stock( void );
 
 	char	*port;
-	std::vector<:x
 
 	std::vector<std::string> line;
 	std::vector<std::string> all_commands;
-	std::vector<std::string> Identity;
-	std::map<std::string, std::vector<std::string> > Identities;
+	std::map<int, std::vector<std::string> > Identities;
 	std::map<std::string, std::vector<std::string> > full_command;
 	std::string pass;
 	std::string word;
-	int	nick_already_set;
+	std::string IP_tmp;
+	int	nick_already_set[100];
+	int	authentified[100];
+	int	User;
 };
 
 #endif
