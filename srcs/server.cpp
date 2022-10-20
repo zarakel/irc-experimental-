@@ -110,6 +110,7 @@ int server(Stock *Stock)
             get_in_addr((struct sockaddr *)&their_addr),
             s, sizeof s);
         printf("server: got connection from %s\n", s);
+	Stock->Identity.push_back(s);
 	popoll.fd = new_fd;
 //	probleme : je ne suis pas sur de reussir a vraiment réaliser le test du pdf,     	a tester ! 
 	std::cout << "(Bienvenue sur le serveur, veuillez taper votre pass.)" << std::endl;

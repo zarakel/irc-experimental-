@@ -54,6 +54,21 @@ int main(int argc, char **argv)
 		return ( 1 );
 	}
 
+	std::string tmp = "PASS";
+	Stock.all_commands.push_back(tmp);
+	
+	tmp = "NICK";
+	Stock.all_commands.push_back(tmp);
+	tmp.clear();
+
+	Stock.full_command["PASS"].push_back("PASS");
+	Stock.full_command["PASS"].push_back("arguement");
+
+	Stock.full_command["NICK"].push_back("NICK");
+	Stock.full_command["NICK"].push_back("arguement");
+
+	Stock.nick_already_set = 0;
+
 // l'etape d'après est la construction du serveur, m nous servira a définir 
 // le port et le mot de passe
 	server(&Stock);

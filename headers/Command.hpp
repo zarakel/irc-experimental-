@@ -4,6 +4,7 @@
 # include "Stock.hpp"
 
 int		PASS(int poll_fd, Stock *Stock);
+int		NICK(int poll_fd, Stock *Stock);
 
 
 #endif

@@ -3,6 +3,7 @@
 
 int	PASS(int poll_fd, Stock *Stock)
 {
+	Stock->Identities[Stock->Identity[0]];
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{
 		if (send(poll_fd, "All Good: You're authorized !\n\r", 31, 0) == -1)

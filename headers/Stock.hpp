@@ -11,20 +11,17 @@ class Stock
 	Stock( void );
 	Stock( Stock const & );
 	Stock & operator=( Stock const & cp );
-/*	void Set_Pass( const std::string );
-	void Set_Word( const std::string );
-	void Set_Current_Line( const std::vector<std::string> );
-	std::string Get_String( void ) const;
-	std::vector<std::string> Get_VectorStr( void ) const;*/
 	~Stock( void );
 
-//	private :
-	
 	char	*port;
 	std::vector<std::string> line;
 	std::vector<std::string> all_commands;
+	std::vector<std::string> Identity;
+	std::map<std::string, std::vector<std::string> > Identities;
+	std::map<std::string, std::vector<std::string> > full_command;
 	std::string pass;
 	std::string word;
+	int	nick_already_set;
 };
 
 #endif

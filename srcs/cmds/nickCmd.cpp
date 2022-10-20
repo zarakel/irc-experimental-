@@ -1,22 +1,25 @@
-/*#include "../../headers/headers.hpp"
+#include "../../headers/headers.hpp"
 
-char	*NICK()
+int	NICK(Stock *Stock)
 {
-	char buf[9999];
-//      probleme : meme prblm qu'avec poll, c'est plus simple d'utiliser recv en mode           bloquant mais est-ce une bonne solution ?
-        if (recv(poll_fd, buf, 9999, MSG_WAITALL) == - 1)
-                perror("recv");
-        for (int it = 0; buf[it] != '\n'; it++)
-        {
-                if (buf[it + 1] == '\n')
-                {
-                        buf[it + 1] = '\0';
-                        break;
-                }
-        }
+
 // suite des evenements : On a capte la donnée, on doit la recracher et la remonter
 // mais dans quoi ??
-
+	if (Stock->line[1] > 0 && Stock->line[2].empty())
+	{
+		Stock->Iddntities[Stock->Identity[0]].push_back(Stock->line[1]);
+		if (send(poll_fd, "All Good: You're nick is set !\n\r", 31, 0) == -1)
+			perror("send");
+		Stock->line.clear();
+		return (0);
+	}
+	
 // Peut etre ajouter sécu
-	return (buf);
-}*/
+	return (0);
+	else
+	{
+		if (send(poll_fd, "Bad param's: You're nick is not set !\n\r", 39, 0) == -1)
+			perror("send");
+		Stock->line.clear();
+	}
+}
