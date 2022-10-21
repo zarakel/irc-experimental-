@@ -1,7 +1,7 @@
 
 # include "headers.hpp"
 
-map<int, string>	err;
+std::map<int, std::string>	err;
 
 // ERRORS
 
@@ -52,15 +52,15 @@ class errorExcute : public std::exception {
         const char * what() const throw() {return _strerror; };
 };
 
-void errorMessage( User user, int numReply, string arg)
+void errorMessage( User user, int numReply, std::string arg)
 {
-    ostringstream s;
+    std::ostringstream s;
 
     if (*(arg.end() - 1) == '\n')
 		arg = arg.substr(0, arg.length() - 1);
 	s << ":mfirc " << numReply << " * " << arg << err[numReply] << "\r\n";
 
-	string msg = s.str();
+	std::string msg = s.str();
 
 	if ( send(user.getFd(), &msg[0], msg.size(), 0) == -1 )
 		throw errorExcute(strerror(errno));

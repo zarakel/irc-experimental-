@@ -1,5 +1,5 @@
-#include "../../headers/headers.hpp"
-#include "../../headers/Command.hpp"
+#include "../headers/headers.hpp"
+#include "../headers/Command.hpp"
 
 int	PASS(int poll_fd, Stock *Stock)
 {
@@ -7,7 +7,9 @@ int	PASS(int poll_fd, Stock *Stock)
 	{
 		if (send(poll_fd, "Bad Usage: You're already authorized !\n\r", 40, 0) == -1)
 			perror("send");
-		return(2000);
+		Stock->line.clear();
+		Stock->IP_tmp.clear();
+		return (2000);
 	}
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{

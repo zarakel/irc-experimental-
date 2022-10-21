@@ -1,5 +1,5 @@
-#include "../../headers/headers.hpp"
-#include "../../headers/Command.hpp"
+#include "../headers/headers.hpp"
+#include "../headers/Command.hpp"
 
 int	NICK(int poll_fd, Stock *Stock)
 {
