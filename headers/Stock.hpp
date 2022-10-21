@@ -11,6 +11,9 @@ class Stock
 	Stock( void );
 	Stock( Stock const & );
 	Stock & operator=( Stock const & cp );
+	void Init_Values( int argc, char **argv );
+	char *Check_Port( char *port );
+	bool Is_Number( const std::string s );
 	~Stock( void );
 
 	char	*port;
