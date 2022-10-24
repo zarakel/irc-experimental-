@@ -40,11 +40,21 @@ void Stock::Init_Values( int argc, char **argv )
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
+	tmp = "USER";
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
 	this->full_command["PASS"].push_back("PASS");
 	this->full_command["PASS"].push_back("arguement");
 
 	this->full_command["NICK"].push_back("NICK");
 	this->full_command["NICK"].push_back("arguement");
+
+	this->full_command["USER"].push_back("USER");
+	this->full_command["USER"].push_back("username");
+	this->full_command["USER"].push_back("hostname");
+	this->full_command["USER"].push_back("servername");
+	this->full_command["USER"].push_back("realname");
 
 	this->User = 0;
 	this->nick_already_set[this->User] = 0;

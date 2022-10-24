@@ -3,9 +3,9 @@
 
 #include "Stock.hpp"
 
-void sigchld_handler( void );
-void *get_in_addr(struct sockaddr *sa);
-void Check_ID(Stock *Stock, char *);
-int server(Stock *Stock);
+void    sigchld_handler( void );
+void    *get_in_addr(struct sockaddr *sa);
+void    Check_ID(Stock *Stock, char *);
+int     server(Stock *Stock);
 
 #endif
