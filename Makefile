@@ -34,31 +34,33 @@ PATH_OBJS		= objs/
 HEADER_LIST		= 
 
 SRC_LIST		= main.cpp Stock.cpp server.cpp parse_message.cpp \
-			passCmd.cpp nickCmd.cpp
+			passCmd.cpp nickCmd.cpp User.cpp
 
-OBJ				= $(addprefix $(PATH_OBJS), $(SRC_LIST:.cpp=.o))
+OBJ			= $(addprefix $(PATH_OBJS), $(SRC_LIST:.cpp=.o))
 
 HEADER			= $(addprefix $(PATH_HEADER), $(HEADER_LIST))
 
 RM				= rm -rf
 
-all:			${NAME}
+all: ${NAME}
 
-$(PATH_OBJS)%.o : $(PATH_SRCS)%.cpp 	$(HEADER)
-								@mkdir -p $(PATH_OBJS)
-								$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@ 
+$(PATH_OBJS)%.o : $(PATH_SRCS)%.cpp $(HEADER)
+	
+	@mkdir -p $(PATH_OBJS) 
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@ 
 
-$(NAME):		$(OBJ) $(HEADER)
-				$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJ) -o $(NAME)
+$(NAME): $(OBJ) $(HEADER)
 
-re: 			fclean all
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJ) -o $(NAME)
+
+re:	fclean all
 
 clean:
-				@${RM} ${PATH_OBJS}
-				@printf "$(YELLOW) *.o $(RED)delete.\n"
+	@${RM} ${PATH_OBJS}
+	@printf "$(YELLOW) *.o $(RED)delete.\n"
 
-fclean:			clean
-				@${RM} $(NAME)
-				@printf "$(YELLOW) *.o, $(GREEN)${NAME} $(RED)delete.\n"
+fclean:	clean
+	@${RM} $(NAME)
+	@printf "$(YELLOW) *.o, $(GREEN)${NAME} $(RED)delete.\n"
 
 .PHONY: 		all clean fclean re

@@ -3,7 +3,7 @@
 
 # include "headers.hpp"
 
-string			ft_addback(vector<string> str, string add, int begin=0);
+std::string	ft_addback(std::vector<std::string> str, std::string add, int begin=0);
 
 
 #endif

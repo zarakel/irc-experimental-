@@ -1,4 +1,3 @@
-#include "../headers/Stock.hpp"
 #include "../headers/headers.hpp"
 #include <cstdlib>
 #include "../headers/Server.hpp"

@@ -1,4 +1,5 @@
 #include "../headers/Stock.hpp"
+#include "../headers/error.hpp"
 
 Stock::Stock( void ){ return; }
 
@@ -32,15 +33,19 @@ void Stock::Init_Values( int argc, char **argv )
 //	check_password(argv[2]);
 	this->pass = argv[2];
 
-	std::string tmp = "PASS";
+	std::string tmp = "PASS"; // Stock->all_commands[0]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
-	tmp = "NICK";
+	tmp = "NICK"; // Stock->all_commands[1]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
-	tmp = "USER";
+	tmp = "USER"; // Stock->all_commands[2]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	tmp = "JOIN"; // Stock->all_commands[3]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
@@ -55,6 +60,13 @@ void Stock::Init_Values( int argc, char **argv )
 	this->full_command["USER"].push_back("hostname");
 	this->full_command["USER"].push_back("servername");
 	this->full_command["USER"].push_back("realname");
+
+	this->full_command["JOIN"].push_back("JOIN");
+	this->full_command["JOIN"].push_back("arguement"); // param A
+	this->full_command["JOIN"].push_back("arguement"); // param B
+//	Le param A est le nom du chan
+//	Le param B est le mot de pass (key) du chan [optionnel]
+//	JOIN peut posséder des params A et B multiples, le minimum est 1 param
 
 	this->User = 0;
 	this->nick_already_set[this->User] = 0;

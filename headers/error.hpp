@@ -1,5 +1,4 @@
-
-# include "headers.hpp"
+# include "User.hpp"
 
 std::map<int, std::string>	err;
 
@@ -54,9 +53,9 @@ class errorExcute : public std::exception {
 
 void errorMessage( User user, int numReply, std::string arg)
 {
-    std::ostringstream s;
+	std::ostringstream s;
 
-    if (*(arg.end() - 1) == '\n')
+	if (*(arg.end() - 1) == '\n')
 		arg = arg.substr(0, arg.length() - 1);
 	s << ":mfirc " << numReply << " * " << arg << err[numReply] << "\r\n";
 
@@ -64,5 +63,4 @@ void errorMessage( User user, int numReply, std::string arg)
 
 	if ( send(user.getFd(), &msg[0], msg.size(), 0) == -1 )
 		throw errorExcute(strerror(errno));
-
 }

@@ -1,8 +1,6 @@
 #ifndef HEADERS_HPP
 # define HEADERS_HPP
 
-//using namespace std;
-
 #include <exception>
 #include <string.h>
 #include <map>
@@ -30,13 +28,5 @@
 # include <signal.h>
 # include <fcntl.h>
 # include <poll.h>
-
-# include "error.hpp"
-# include "User.hpp"
-# include "Command.hpp"
-# include "parse_message.hpp"
-# include "Server.hpp"
-# include "Stock.hpp"
-# include "tools.hpp"
 
 #endif
