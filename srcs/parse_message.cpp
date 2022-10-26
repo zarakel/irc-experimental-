@@ -29,14 +29,17 @@ int	command_check(int poll_fd, Stock *Stock)
 					NICK(poll_fd, Stock);
 					return (0);
 				}
-			/*	if (Stock->line[0] == Stock->all_commands[3]
+				if ((Stock->line[0] == Stock->all_commands[3]
+				&& Stock->line[2].empty() != 0
+				&& Stock->authentified[Stock->User] == 1) |
+				(Stock->line[0] == Stock->all_commands[3]
 				&& Stock->line[2].size() > 0
 				&& Stock->line[3].empty() != 0
-				&& Stock->authentified[Stock->User] == 1)
+				&& Stock->authentified[Stock->User] == 1))
 				{
 					JOIN(poll_fd, Stock);
 					return (0);
-				}*/
+				}
 				if (Stock->authentified[Stock->User] == 0)
 				{
 					if (send(poll_fd, "Bad Usage: You're not authorized !\n\r", 37, 0) == -1)
