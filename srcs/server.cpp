@@ -36,7 +36,6 @@ void Check_ID(Stock *Stock, char *s)
 			if (Stock->Identities[i][0].compare(s) == 0)
 			{
 				Stock->User = i;
-				std::cout << "coucou" << std::endl;
 				break;
 			}
 			else if (i == Stock->User 
