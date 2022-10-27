@@ -36,90 +36,125 @@ int	JOIN(int poll_fd, Stock * Stock)
 	{
 		if (Stock->line[1][i] == ' ' | Stock->line[1][i] == 7)
 		{
-			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 31, 0) == -1)
+			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
 				perror("send");
 			Stock->line.clear();
 			return (882);
 		}
-		if ( Stock->line[1][i] != 0 )
-			tmp.push_back(Stock->line[1][i]);
-		if ( Stock->line[1].compare(tmp) == 0 )
+		tmp.push_back(Stock->line[1][i]);
+		if ( Stock->line[1][i + 1] == '\0'
+		| Stock->line[1][i + 1] == ',' )
+		{
 			tmp_Channel.push_back(tmp);
+			tmp.clear();
+		}
 		if (Stock->line[1][i + 1] == ',' &&
-		(Stock->line[1][i + 2] == '#' && Stock->line[1][i + 2] == '&'
-		&& Stock->line[1][i + 2] == '+' && Stock->line[1][i + 2] == '!'))
+		(Stock->line[1][i + 2] == '#' | Stock->line[1][i + 2] == '&'
+		| Stock->line[1][i + 2] == '+' | Stock->line[1][i + 2] == '!'))
 		{
 			i++;
 			it++;
 		}
 		else if (Stock->line[1][i + 1] == ',' &&
 	(Stock->line[1][i + 2] != '#' | Stock->line[1][i + 2] != '&'
-	| Stock->line[1][i + 2] != '+'| Stock->line[1][i + 2] != '!'))
+	| Stock->line[1][i + 2] != '+' | Stock->line[1][i + 2] != '!'))
 		{
-			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 31, 0) == -1)
+			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
 				perror("send");
 			Stock->line.clear();
 			return (882);
 		}
 	}
+	tmp_Channel.push_back("\0");
 	tmp.clear();
 	for (int i = 0; i <= it; i++)
 		tmp_Key.push_back("\0");
 	it = 0;
 // vérif des keys
-	for ( int i = 0; Stock->line[2].empty() == 0 && 
+	for ( int i = 0; Stock->line[2][i] && 
 	Stock->line[2][i] != '\n' | Stock->line[2][i] != '\r'; i++)
 	{
-		if ( i == 0 )
-			tmp_Key[it].clear();
 		if (Stock->line[2][i] == ' ' | Stock->line[2][i] == 7)
 		{
-			if (send(poll_fd, "Bad Param: key contain wrong characters\r\n", 31, 0) == -1)
+			if (send(poll_fd, "Bad Param: key contain wrong characters\r\n", 41, 0) == -1)
 				perror("send");
 			Stock->line.clear();
 			return (883);
 		}
-		if ( Stock->line[2][i + 1] != 0 )
-			tmp.push_back(Stock->line[1][i]);
-		if ( Stock->line[2][i + 1] == 0 && tmp.empty() != 0 )
-			tmp_Key[it].push_back(Stock->line[1][i]);
-//		tmp_Key[it] = Stock->line[2][i];
-		if (Stock->line[2][i + 1] == ',')
+		tmp.push_back(Stock->line[2][i]);
+		it++;
+		if ( Stock->line[2][i + 1] == '\0'
+		| Stock->line[2][i + 1] == ',' )
 		{
+			tmp_Key[o].replace(0, it, tmp);
+			std::cout << "key = "<< tmp_Key[o] << std::endl;
+			tmp.clear();
+		}
+//		tmp_Key[it] = Stock->line[2][i];
+		if (Stock->line[2][i + 1] == ',' &&
+		Stock->line[2][i + 2] == ',')
+		{
+			it = 0;
 			i++;
-			it++;
+			o++;
 		}
 	}
+	o = 0;
 // vérif si channel existe déja
-	for ( int i = 0; Stock->Channel_Count > 0 && i < Stock->Channel_Count
-		&& Stock->Channels[i][0].empty() == 0; i++)
+	for ( int i = 0; Stock->Channel_Count > 0 && i <= Stock->Channel_Count
+	&& tmp_Channel[o].compare("\0") != 0; i++)
 	{
-		// si on repere un channel déja existant	
+		// si on repere un channel déja existant
+		// check_debug	
+		int yo = 0;
+		std::cout << "yo = " << yo++ << std::endl;
 		std::cout << "Tour = " << i << std::endl;
-		if ( tmp_Channel[o] == Stock->Channels[i][0] && tmp_Key[o]
-		== Stock->Channels[i][1])
+		std::cout << "Chan = " << (int)tmp_Channel.size() << std::endl;
+		std::cout << "o = " <<  o << std::endl;
+		if (i < Stock->Channel_Count)
+		{
+			std::cout << "chan = " << tmp_Channel[o] << " && " <<
+			Stock->Channels[i][0] << std::endl;
+			std::cout << "mdp = " << tmp_Key[o] << " && " <<
+			Stock->Channels[i][1] << std::endl;
+		}
+		// fin check debug
+		if ( i < Stock->Channel_Count && 
+		tmp_Channel[o] == Stock->Channels[i][0] &&
+		tmp_Key[o] == Stock->Channels[i][1])
 // l'idée, c'est que si key n'existe pas, on mets '\0'
 		{
-			for( int a = 0; 
-			Stock->Identities[Stock->User][a].empty() == 0; a++)
+			std::cout << "yo = " << yo++ << std::endl;
+			if (Stock->Identities[Stock->User][0] != 
+			Stock->Channels_Users[Stock->Channels[i][0]][0])
 			{
-				if (Stock->Identities[Stock->User][0] == 
-				Stock->Channels_Users[Stock->Channels[i][0]][0])
-					break;
-				Stock->Channels_Users[Stock->Channels[i][0]].
-				push_back(Stock->Identities[Stock->User][a]);
+				Stock->Channels_Users
+				[Stock->Channels[i][0]].push_back
+				(Stock->Identities[Stock->User][0]);
+				if (send(poll_fd,
+				"JOIN (known channel) complete\n\r", 31, 0)
+				== -1)
+					perror("send");
 			}
-// la boucle for enregistre l'identité de l'ip, du nickname, du username de 	l'user actuel
+// le if enregistre l'ip de l'user actuel si il ne l'a pas déja
+// probleme : Je n'enregistre pas le nick et le user 
+
 			/*tmp = Stock->line[0];
 			tmp += ' ';
 			tmp += tmp_Channel[o];
 			if (send(poll_fd, static_cast<void *>(&tmp), tmp.length(), 0) == -1)
 				perror("send");
 			tmp.clear();*/
-			if (send(poll_fd, "(known channel)JOIN complete\n\r",
-			30, 0) == -1)
-				perror("send");
-			if (Stock->Channels[i][2].empty() == 0)
+			else if (Stock->Identities[Stock->User][0] == 
+			Stock->Channels_Users[Stock->Channels[i][0]][0])
+			{
+				std::cout << "yo = " << yo++ << std::endl;
+				if (send(poll_fd,
+				"You are already connected\n\r", 27, 0)
+				== -1)
+					perror("send");
+			}
+			if (Stock->Channels[i][2].compare("\0") != 0)
 // 			Channels[i][1] == key
 // 			Channels[i][2] == topic 
 			{
@@ -134,21 +169,34 @@ int	JOIN(int poll_fd, Stock * Stock)
 				0) == -1)
 					perror("send");
 			}
+			o++;
+			if (o == (int)tmp_Channel.size())
+			{
+				tmp_Channel.clear();
+				tmp_Key.clear();
+				Stock->line.clear();
+				return (1239);
+			}
 	//		tmp_Channel_Check[o] = 1;
 		}
-		else if ( tmp_Channel[o] == Stock->Channels[i][0] && tmp_Key[o]
-		!= Stock->Channels[i][1])
+		else if ( i < Stock->Channel_Count &&
+		tmp_Channel[o] == Stock->Channels[i][0] &&
+		tmp_Key[o] != Stock->Channels[i][1])
 		{
 			if (send(poll_fd, "Bad param: Key is wrong\r\n",
 			25, 0) == -1)
 				perror("send");
-			return(5874);	
+			tmp_Channel.clear();
+			tmp_Key.clear();
+			Stock->line.clear();
+			return (5874);	
 		}
-		if ( Stock->Channels[i + 1][0].empty() != 0 )
+		else if ( i == Stock->Channel_Count &&
+		o <= (int)tmp_Channel.size() )
 		{
-			int yo = 0;
-			std::cout << "yo = " << yo << std::endl;
 			Stock->Channels[i].push_back(tmp_Channel[o]);
+			Stock->Channels[i].push_back("\0");
+			Stock->Channels[i].push_back("\0");
 /*			tmp = Stock->line[0];
 			tmp += ' ';
 			tmp += tmp_Channel[o];
@@ -160,40 +208,51 @@ int	JOIN(int poll_fd, Stock * Stock)
 				perror("send");
 			if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
 				perror("send");
-			i = 0;
-			for( int a = 0; 
-			Stock->Identities[Stock->User][a].empty() == 0; 				a++)
+			if (Stock->Identities[Stock->User][0].empty() == 0)
 			{
 				std::cout << "blague" << std::endl;
 				Stock->Channels_Users
 				[Stock->Channels[i][0]].push_back
-				(Stock->Identities[Stock->User][a]);
+				(Stock->Identities[Stock->User][0]);
 			}
 			std::cout << "fin" << std::endl;
 			Stock->Channel_Count++;
 			o++;
+			i = -1;
 		}
-		if ( tmp_Channel[o].empty() != 0 )
+	/*	if ( o == (int)tmp_Channel.size() )
 		{
 			std::cout << "fin de la fin" << std::endl;
 			tmp.clear();
 			break;
-		}
+		}*/
+		std::cout << "fin de boucle" << std::endl;
 	}
 // Continuer le traitement de JOIN - Ici, gérer cas création due a channel 
 // non trouvé
+	int tour = 0;
+	int yo = 0;
+	std::cout << "post boucle check channel" << std::endl;
+	std::cout << "tmp_Channel = " << (int)tmp_Channel.size() << std::endl;
 	if ( Stock->Channel_Count == 0 )
 	{
-		for (int i = 0; tmp_Channel[i].empty() == 0; i++)
+		std::cout << "boucle new channel" << std::endl;
+		for (int i = 0; i < (int)tmp_Channel.size() &&
+		tmp_Channel[i].compare("\0") != 0; i++)
 		{
+			std::cout << "Tour " << tour++ << std::endl;
 			if (tmp_Key[i].compare("\0") != 0)
 			{
 				if (send(poll_fd, "Bad param: Key is wrong\r\n",
 				25, 0) == -1)
 					perror("send");
+				tmp_Channel.clear();
+				tmp_Key.clear();
+				Stock->line.clear();
 				return(5874);	
 			}
 			Stock->Channels[i].push_back(tmp_Channel[i]);
+			Stock->Channels[i].push_back(tmp_Key[i]);
 			Stock->Channels[i].push_back("\0");
 /*			tmp = Stock->line[0]; doit servir a send une phrase							composé
 			tmp += ' ';
@@ -204,19 +263,18 @@ int	JOIN(int poll_fd, Stock * Stock)
 				perror("send");*/
 			if (send(poll_fd, "JOIN complete\r\n", 15, 0) == -1)
 				perror("send");
-			tmp.clear();
+//			tmp.clear();
 			if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
 				perror("send");
-			for( int a = 0; 
-			Stock->Identities[Stock->User][a].empty() == 0; 				a++)
-			{
-				Stock->Channels_Users
-				[Stock->Channels[i][0]].push_back
-				(Stock->Identities[Stock->User][a]);
-			}
+			std::cout << "yo = " << yo++ << std::endl;
+			Stock->Channels_Users
+			[Stock->Channels[i][0]].push_back
+			(Stock->Identities[Stock->User][0]);
 			Stock->Channel_Count++;
 		}
 	}
+	std::cout << "Clean Step" << std::endl;
+	std::cout << "Stock->Channel_Count =" << Stock->Channel_Count << std::endl;
 	tmp_Channel.clear();
 	tmp_Key.clear();
 	Stock->line.clear();

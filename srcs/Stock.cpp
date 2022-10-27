@@ -71,6 +71,7 @@ void Stock::Init_Values( int argc, char **argv )
 //	JOIN peut posséder des params A et B multiples, le minimum est 1 param
 
 	this->User = 0;
+	this->User_Count = 0;
 	this->Channel_Count = 0;
 	this->nick_already_set[this->User] = 0;
 	this->authentified[this->User] = 0;

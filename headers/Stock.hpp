@@ -31,6 +31,7 @@ class Stock
 	int	authentified[100];
 	int	User;
 	int	Channel_Count; // Channel_Count commencera par 1 pour dire qu'1 	channel a été crée, nous dit comebien de channels sont crées
+	int	User_Count; // Pareil qu'au dessus
 };
 
 #endif

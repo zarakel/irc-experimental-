@@ -31,17 +31,16 @@ void Check_ID(Stock *Stock, char *s)
 		Stock->IP_tmp = s;
 	else if (Stock->Identities[Stock->User][0].compare(s) != 0)
 	{
-		for (int i = 0; i <= Stock->User; i++)
+		for (int i = 0; i < Stock->User_Count; i++)
 		{
 			if (Stock->Identities[i][0].compare(s) == 0)
 			{
 				Stock->User = i;
 				break;
 			}
-			else if (i == Stock->User 
-			&& Stock->Identities[i][0].compare(s) != 0)
+			else if (Stock->Identities[i + 1][0].empty() != 0)
 			{
-				Stock->User++;
+				Stock->User = i;
 				Stock->IP_tmp.clear();
 				Stock->IP_tmp = s;
 			}

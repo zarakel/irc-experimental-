@@ -19,6 +19,7 @@ int	PASS(int poll_fd, Stock *Stock)
 		Stock->line.clear();
 		Stock->authentified[Stock->User] = 1;
 		Stock->Identities[Stock->User].push_back(Stock->IP_tmp);
+		Stock->User_Count++;
 		Stock->IP_tmp.clear();
 		return(3);
 	}
