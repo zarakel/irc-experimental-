@@ -27,6 +27,7 @@ void *get_in_addr(struct sockaddr *sa)
 
 void Check_ID(Stock *Stock, char *s)
 {
+// a arranger !
 	if (Stock->Identities.empty())
 		Stock->IP_tmp = s;
 	else if (Stock->Identities[Stock->User][0].compare(s) != 0)

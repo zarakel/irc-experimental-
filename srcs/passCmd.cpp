@@ -5,7 +5,7 @@ int	PASS(int poll_fd, Stock *Stock)
 {
 	if (Stock->authentified[Stock->User] == 1)
 	{
-		if (send(poll_fd, "Bad Usage: You're already authorized !\n\r", 40, 0) == -1)
+		if (send(poll_fd, "Bad Usage: PASS already good !\n\r", 32, 0) == -1)
 			perror("send");
 		Stock->line.clear();
 		Stock->IP_tmp.clear();
@@ -13,11 +13,11 @@ int	PASS(int poll_fd, Stock *Stock)
 	}
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{
-		if (send(poll_fd, "All Good: You're authorized !\n\r", 31, 0) == -1)
+		if (send(poll_fd, "Good PASS !\n\r", 13, 0) == -1)
 			perror("send");
 //              authentification réussi, pour le pass en tout cas
 		Stock->line.clear();
-		Stock->authentified[Stock->User] = 1;
+		Stock->tmp_authentified[Stock->User] = 1;
 		Stock->Identities[Stock->User].push_back(Stock->IP_tmp);
 		Stock->User_Count++;
 		Stock->IP_tmp.clear();

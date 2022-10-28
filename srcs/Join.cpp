@@ -125,6 +125,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 // l'idée, c'est que si key n'existe pas, on mets '\0'
 		{
 			std::cout << "yo = " << yo++ << std::endl;
+// On part du postulat qu'on a toujours le meme nombre d'info et que l'ordre desdonnées utilisateurs (ip, nick, user) n'a pas d'importance
 			if (Stock->Identities[Stock->User][0] != 
 			Stock->Channels_Users[Stock->Channels[i][0]][0])
 			{
@@ -132,9 +133,20 @@ int	JOIN(int poll_fd, Stock * Stock)
 				[Stock->Channels[i][0]].push_back
 				(Stock->Identities[Stock->User][0]);
 				if (send(poll_fd,
-				"JOIN (known channel) complete\n\r", 31, 0)
+				"JOIN (existing channel) complete\n\r", 34, 0)
 				== -1)
 					perror("send");
+				it =
+				Stock->Channels_Users
+				[Stock->Channels[i][0]].size();
+				for (int z =
+				Stock->Identities[Stock->User].size(); 
+				z >= it; it++)
+				{
+					Stock->Channels_Users
+					[Stock->Channels[i][0]].push_back
+					(Stock->Identities[Stock->User][it]);
+				}
 			}
 // le if enregistre l'ip de l'user actuel si il ne l'a pas déja
 // probleme : Je n'enregistre pas le nick et le user 
@@ -154,6 +166,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 				== -1)
 					perror("send");
 			}
+			
 			if (Stock->Channels[i][2].compare("\0") != 0)
 // 			Channels[i][1] == key
 // 			Channels[i][2] == topic 
@@ -208,13 +221,27 @@ int	JOIN(int poll_fd, Stock * Stock)
 				perror("send");
 			if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
 				perror("send");
-			if (Stock->Identities[Stock->User][0].empty() == 0)
+			it =
+			Stock->Channels_Users[Stock->Channels[i][0]].size()+ 1;
+			for (int z = Stock->Identities[Stock->User].size();
+			z > it; it++)
+			{
+				
+				Stock->Channels_Users
+				[Stock->Channels[i][0]].push_back
+				(Stock->Identities[Stock->User][it]);
+				if (send(poll_fd,
+				"JOIN (known channel) complete\n\r", 31, 0)
+				== -1)
+					perror("send");
+			}
+		/*	if (Stock->Identities[Stock->User][0].empty() == 0)
 			{
 				std::cout << "blague" << std::endl;
 				Stock->Channels_Users
 				[Stock->Channels[i][0]].push_back
 				(Stock->Identities[Stock->User][0]);
-			}
+			}*/
 			std::cout << "fin" << std::endl;
 			Stock->Channel_Count++;
 			o++;

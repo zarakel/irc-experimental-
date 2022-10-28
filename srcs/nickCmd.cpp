@@ -12,6 +12,7 @@ int	NICK(int poll_fd, Stock *Stock)
 			perror("send");
 		Stock->line.clear();
 		Stock->nick_already_set[Stock->User] = 1;
+		Stock->tmp_authentified[Stock->User] = 2;
 		return (20);
 	}
 	else if (Stock->line[1].length() > 0 && Stock->line[2].empty() 

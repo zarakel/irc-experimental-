@@ -23,6 +23,7 @@ Stock & Stock::operator=( Stock const & cp )
 	{
 		this->nick_already_set[i] = cp.nick_already_set[i];
 		this->authentified[i] = cp.authentified[i];
+		this->tmp_authentified[i] = cp.authentified[i];
 	}
 	return *this;
 }
@@ -75,6 +76,7 @@ void Stock::Init_Values( int argc, char **argv )
 	this->Channel_Count = 0;
 	this->nick_already_set[this->User] = 0;
 	this->authentified[this->User] = 0;
+	this->tmp_authentified[this->User] = 0;
 }
 
 char	*Stock::Check_Port( char *port )

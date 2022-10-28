@@ -24,11 +24,19 @@ int	command_check(int poll_fd, Stock *Stock)
 				}
 				if (Stock->line[0] == Stock->all_commands[1]
 				&& Stock->line[2].empty() != 0
-				&& Stock->authentified[Stock->User] == 1)
+				&& (Stock->tmp_authentified[Stock->User] == 1
+				| Stock->authentified[Stock->User] == 1))
 				{
 					NICK(poll_fd, Stock);
 					return (0);
 				}
+/* condition supposé de user if (Stock->line[0] == Stock->all_commands[1]
+				&& Stock->line[2].empty() != 0
+				&& (Stock->tmp_authentified[Stock->User] == 2
+				| Stock->authentified == 1))*/
+
+// une fois pass, nick et user de fait, authentified = 1
+
 				if ((Stock->line[0] == Stock->all_commands[3]
 				&& Stock->line[2].empty() != 0
 				&& Stock->authentified[Stock->User] == 1) |

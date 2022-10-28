@@ -28,6 +28,7 @@ class Stock
 	std::string word;
 	std::string IP_tmp;
 	int	nick_already_set[100];
+	int	tmp_authentified[100];
 	int	authentified[100];
 	int	User;
 	int	Channel_Count; // Channel_Count commencera par 1 pour dire qu'1 	channel a été crée, nous dit comebien de channels sont crées
