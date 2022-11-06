@@ -1,6 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
+/*   Updated: 2022/11/04 20:41:32 by juan             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/headers.hpp" 
 #include "../headers/parse_message.hpp"
 #include "../headers/Server.hpp"
+#include <stdlib.h> 
 
 #define BACKLOG 10   // how many pending connections queue will hold
 
@@ -25,25 +38,26 @@ void *get_in_addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-void Check_ID(Stock *Stock, char *s)
+void Check_FD(Stock *Stock, int new_fd)
 {
 // a arranger !
-	if (Stock->Identities.empty())
-		Stock->IP_tmp = s;
-	else if (Stock->Identities[Stock->User][0].compare(s) != 0)
+	std::cout << "yo" << std::endl;
+	if (Stock->Nicks.empty() == 0 && Stock->Identities
+	[Stock->User].empty() == 0)
 	{
+		std::cout << "ipayo" << std::endl;
 		for (int i = 0; i < Stock->User_Count; i++)
 		{
-			if (Stock->Identities[i][0].compare(s) == 0)
+			if (Stock->client_fd[i] == new_fd)
 			{
 				Stock->User = i;
 				break;
 			}
-			else if (Stock->Identities[i + 1][0].empty() != 0)
+			else if (Stock->client_fd[i + 1] == 0)
 			{
 				Stock->User = i;
-				Stock->IP_tmp.clear();
-				Stock->IP_tmp = s;
+				Stock->client_fd[i] = new_fd;
+				Stock->User_Count++;
 			}
 		}
 	}
@@ -51,9 +65,9 @@ void Check_ID(Stock *Stock, char *s)
 
 int server(Stock *Stock)
 {
-	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
+	int sockfd;  // listen on sock_fd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
-	struct pollfd popoll;
+	struct pollfd *popoll;
 	struct sockaddr_storage their_addr; // connector's address information
 	socklen_t sin_size;
 	struct sigaction sa;
@@ -66,9 +80,6 @@ int server(Stock *Stock)
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // use my IP
-	memset(&popoll, 0, sizeof popoll);
-	popoll.events = POLLIN;
-
 	if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
@@ -84,14 +95,12 @@ int server(Stock *Stock)
 			perror("server: socket");
 			continue;
 		}
-
 		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
 		sizeof(int)) == -1) 
 		{
 			perror("setsockopt");
 			exit(1);
 		}
-
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1)
 		{
 			close(sockfd);
@@ -124,42 +133,61 @@ int server(Stock *Stock)
 		perror("sigaction");
 		exit(1);
 	}
-
+	if ((popoll = (struct pollfd *)malloc(10 * sizeof(popoll))) == NULL)
+		perror("malloc");
+	popoll->fd = sockfd;
+	popoll->events = POLLIN;
+	popoll->revents = 0;	
+	Stock->User_Count++;
 	printf("server: waiting for connections...\n");
+	int nfds = 0;
+	fcntl(sockfd, F_SETFL, O_NONBLOCK);
 
 	while(1)
 	{  // main accept() loop
-		sin_size = sizeof their_addr;
-		new_fd = accept(sockfd, (struct sockaddr *)&their_addr,
-		&sin_size);
-		if (new_fd == -1) 
+		nfds = Stock->User_Count;
+		if (poll(popoll, nfds, 0) == -1)
+			perror("poll"); 
+		for (int i = 0; i < (nfds + 1); i++)
 		{
-			perror("accept");
-			continue;
-		}
-
-		inet_ntop(their_addr.ss_family,
-		get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
-		printf("server: got connection from %s\n", s);
-		Check_ID(Stock, s);
-		popoll.fd = new_fd;
-// probleme : le test du pdf ne marche pas ! 
-		std::cout <<
-		"(Bienvenue sur le serveur, veuillez taper votre pass.)"
-		<< std::endl;
-		if (poll(&popoll, 1, 10000000) == 1) 
-		{
-			try
+			std::cout << "start for" << std::endl;
+			if (((popoll + i)->revents & POLLIN) == POLLIN)
 			{
-				receive_message(popoll.fd, Stock);
+				std::cout << "never" << std::endl;
+				sin_size = sizeof their_addr;
+				int new_fd;
+				if ((new_fd = accept((popoll + i)->fd,
+				(struct sockaddr *)&their_addr,
+				&sin_size)) == -1 )
+					perror("accept");
+				if (new_fd != (popoll + i)->fd)
+				{
+				Stock->User_Count++;
+				(popoll + Stock->User_Count - 1)->fd = new_fd;
+				(popoll + Stock->User_Count - 1)->events = POLLIN;
+				(popoll + Stock->User_Count - 1)->revents = 0;
+		//		Stock->client_fd[Stock->User_Count - 2]  = new_fd;
+		//		Stock->User = Stock->User_Count - 2;
+				}
+				inet_ntop(their_addr.ss_family,
+				get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
+				printf("server: got connection from %s\n", s);
+				std::cout <<
+				"(Bienvenue sur le serveur, veuillez taper votre pass.)" << std::endl;
 			}
-			catch (const std::exception & e)
+			else
 			{
-				std::cerr << s << e.what() << std::endl;
-				return (464);
+				std::cout << "start else" << std::endl;
+			/*	i = 0;
+				while (((popoll + i)->revents & POLLIN) != POLLIN)
+					i++;*/
+		//		std::cout << i << std::endl;
+				std::cout << "poll = " << (popoll + i)->fd << std::endl;
+				receive_message((popoll + i)->fd, Stock);
+		//		std::cout << "sock = " << sockfd << std::endl;
+		//		std::cout << "break" << std::endl;
+				break;
 			}
-			close(new_fd);
-			close(popoll.fd);
 		}
 	}
 	return 0;

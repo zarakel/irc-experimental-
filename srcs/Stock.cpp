@@ -11,19 +11,21 @@ Stock & Stock::operator=( Stock const & cp )
 {
 	this->line = cp.line;
 	this->all_commands = cp.all_commands;
+	this->Nicks = cp.Nicks;
 	this->Identities = cp.Identities;
 	this->Channels = cp.Channels;
 	this->full_command = cp.full_command;
 	this->pass = cp.pass;
 	this->word = cp.word;
-	this->IP_tmp = cp.IP_tmp;
 	this->User = cp.User;
+	this->fd_count = cp.fd_count;
 	this->Channel_Count = cp.Channel_Count;
 	for (int i = 0; i <= this->User; i++)
 	{
 		this->nick_already_set[i] = cp.nick_already_set[i];
 		this->authentified[i] = cp.authentified[i];
-		this->tmp_authentified[i] = cp.authentified[i];
+		this->tmp_authentified[i] = cp.tmp_authentified[i];
+		this->client_fd[i] = cp.client_fd[i];
 	}
 	return *this;
 }
@@ -74,9 +76,14 @@ void Stock::Init_Values( int argc, char **argv )
 	this->User = 0;
 	this->User_Count = 0;
 	this->Channel_Count = 0;
-	this->nick_already_set[this->User] = 0;
-	this->authentified[this->User] = 0;
-	this->tmp_authentified[this->User] = 0;
+	this->fd_count = 0;
+	for (int i = 0; i < 100; i++)
+	{
+		this->nick_already_set[i] = 0;
+		this->authentified[i] = 0;
+		this->tmp_authentified[i] = 0;
+		this->client_fd[i] = 0;
+	}
 }
 
 char	*Stock::Check_Port( char *port )

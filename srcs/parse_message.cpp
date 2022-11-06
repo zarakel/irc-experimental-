@@ -8,10 +8,11 @@ int	command_check(int poll_fd, Stock *Stock)
 
 // il faudra créer une fonction fill_cmd ou quelque chose du genre
 	int i = 0;
-
-
+	int yo = 0;
+	std::cout << "before boucle " << yo++ << std::endl;
 	while (!Stock->all_commands[i].empty())
 	{	
+		std::cout << "iinside " << yo++ << std::endl;
 		if (Stock->line[0] == Stock->all_commands[i])  
 		{
 			if (Stock->line[1].size() > 0)
@@ -53,7 +54,6 @@ int	command_check(int poll_fd, Stock *Stock)
 					if (send(poll_fd, "Bad Usage: You're not authorized !\n\r", 37, 0) == -1)
 						perror("send");
 					Stock->line.clear();
-					Stock->IP_tmp.clear();
 					return (565);
 				}
 			}
@@ -62,25 +62,31 @@ int	command_check(int poll_fd, Stock *Stock)
 				if (send(poll_fd, "Bad Param': On refait bien la, oh !\n\r", 37, 0) == -1)
 					perror("send");
 				Stock->line.clear();
-				Stock->IP_tmp.clear();
 				return (598);
 			}
 		}
 		i++;
 	}
+	/*std::cout << "fin boucle" << std::endl;
+	std::cout << "ce fameux poll = " << poll_fd << std::endl; 
 	if (send(poll_fd, "Bad Command: Faites un effort, voyons.\n\r", 40, 0) == -1)
-		perror("send");
-	Stock->line.clear();
-	Stock->IP_tmp.clear();
-	return (458);	
+	{
+		std::cout << "la" << std::endl;
+		perror("send");*/
+		Stock->line.clear();
+		return (458);	
 }
 
 int	receive_message(int poll_fd, Stock *Stock)
 {
+	std::cout << "start receive message" << std::endl;
 	char		buf[9999];	
 
 	if (recv(poll_fd, buf, 9999, 0) == -1)
-		perror("send :");
+	{
+		perror("recv :");
+		return (10);
+	}
 	for (int it = 0; ((buf[it] != '\n' | buf[it] != '\r') && it <= 512) ; 			it++)
 	{
 		if (buf[it] == ':' && (buf[it + 1] != ' ' | buf[it + 1] != '\n'
@@ -109,7 +115,6 @@ int	receive_message(int poll_fd, Stock *Stock)
 				perror("send");
 			Stock->word.clear();
 			Stock->line.clear();
-			Stock->IP_tmp.clear();
 			return (11);
 		}	
 		if (buf[it + 1] == '\n' | buf[it + 1] == '\r')
@@ -123,15 +128,15 @@ int	receive_message(int poll_fd, Stock *Stock)
 		}
 		else if (buf[it + 1] == '\0')
 			it += 2;
-		if (it > 512)
+/*		if (it > 512)
 		{
 			if (send(poll_fd, "Message too long: C'est plus que Levis quand même\n\r", 50, 0) == -1)
 				perror("send");
 			Stock->word.clear();
 			Stock->line.clear();
 			return (19);
-		}	
+		}	*/
 	}
 	command_check(poll_fd, Stock);
-	return (-1);
+	return (0);
 }
