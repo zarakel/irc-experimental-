@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/04 20:41:32 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/08 15:27:58 by operculesangu    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,15 @@ void *get_in_addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-void Check_FD(Stock *Stock, int new_fd)
+void Check_FD(Stock *Stock, struct pollfd *popoll)
 {
 // a arranger !
-	std::cout << "yo" << std::endl;
+/*	std::cout << "yo" << std::endl;
 	if (Stock->Nicks.empty() == 0 && Stock->Identities
 	[Stock->User].empty() == 0)
 	{
 		std::cout << "ipayo" << std::endl;
-		for (int i = 0; i < Stock->User_Count; i++)
+		for (int i = 0; i < Stock->User; i++)
 		{
 			if (Stock->client_fd[i] == new_fd)
 			{
@@ -54,33 +54,41 @@ void Check_FD(Stock *Stock, int new_fd)
 				break;
 			}
 			else if (Stock->client_fd[i + 1] == 0)
-			{
-				Stock->User = i;
-				Stock->client_fd[i] = new_fd;
-				Stock->User_Count++;
-			}
-		}
-	}
+			{*/
+				for (int a = 0; (((popoll + a)->events & POLLIN) != POLLIN); a++)
+				{
+					if (((popoll + a)->events & POLLIN) == POLLIN)
+					{
+						Stock->User = a;
+						std::cout << "t qui toi la (fd in check) = " <<
+						(popoll + a)->fd << std::endl;
+					}
+				}
+	//		}
+/*		}
+	}*/
 }
+				
 
 int server(Stock *Stock)
 {
-	int sockfd;  // listen on sock_fd, new connection on new_fd
+	int sockfd;
 	struct addrinfo hints, *servinfo, *p;
 	struct pollfd *popoll;
 	struct sockaddr_storage their_addr; // connector's address information
 	socklen_t sin_size;
 	struct sigaction sa;
 	int yes=1;
-	char s[INET6_ADDRSTRLEN];
-	int rv;
+char s[INET6_ADDRSTRLEN];
+int rv;
 
-	std::cout << "Le pass est censé être : " << Stock->pass << std::endl;
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE; // use my IP
-	if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
+std::cout << "Le pass est censé être : " << Stock->pass << std::endl;
+memset(&hints, 0, sizeof hints);
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+hints.ai_flags = AI_PASSIVE; // use my IP
+
+if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
@@ -95,12 +103,14 @@ int server(Stock *Stock)
 			perror("server: socket");
 			continue;
 		}
+
 		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
 		sizeof(int)) == -1) 
 		{
 			perror("setsockopt");
 			exit(1);
 		}
+
 		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1)
 		{
 			close(sockfd);
@@ -109,7 +119,7 @@ int server(Stock *Stock)
 		}
 
         	break;
-    	}
+    }
 
 	freeaddrinfo(servinfo); // all done with this structure
 
@@ -125,9 +135,6 @@ int server(Stock *Stock)
 		exit(1);
 	}
 
-	sa.sa_handler = sigchld_handler; // reap all dead processes
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
 	if (sigaction(SIGCHLD, &sa, NULL) == -1)
 	{
 		perror("sigaction");
@@ -142,7 +149,7 @@ int server(Stock *Stock)
 	printf("server: waiting for connections...\n");
 	int nfds = 0;
 	fcntl(sockfd, F_SETFL, O_NONBLOCK);
-
+//	int otherfd = 0;
 	while(1)
 	{  // main accept() loop
 		nfds = Stock->User_Count;
@@ -151,41 +158,49 @@ int server(Stock *Stock)
 		for (int i = 0; i < (nfds + 1); i++)
 		{
 			std::cout << "start for" << std::endl;
-			if (((popoll + i)->revents & POLLIN) == POLLIN)
+			std::cout << "never" << std::endl;
+			sin_size = sizeof their_addr;
+			int new_fd;
+			if ((new_fd = accept((popoll + i)->fd,
+			(struct sockaddr *)&their_addr,
+			&sin_size)) == -1 )
+				perror("accept");
+			std::cout << "new_fd 0= " << new_fd << std::endl;
+			inet_ntop(their_addr.ss_family,
+			get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
+			printf("server: got connection from %s\n", s);
+			std::cout <<
+			"(Bienvenue sur le serveur, veuillez taper votre pass.)" << std::endl;
+			if (new_fd != -1)
 			{
-				std::cout << "never" << std::endl;
-				sin_size = sizeof their_addr;
-				int new_fd;
-				if ((new_fd = accept((popoll + i)->fd,
-				(struct sockaddr *)&their_addr,
-				&sin_size)) == -1 )
-					perror("accept");
-				if (new_fd != (popoll + i)->fd)
-				{
-				Stock->User_Count++;
-				(popoll + Stock->User_Count - 1)->fd = new_fd;
-				(popoll + Stock->User_Count - 1)->events = POLLIN;
-				(popoll + Stock->User_Count - 1)->revents = 0;
-		//		Stock->client_fd[Stock->User_Count - 2]  = new_fd;
-		//		Stock->User = Stock->User_Count - 2;
-				}
-				inet_ntop(their_addr.ss_family,
-				get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
-				printf("server: got connection from %s\n", s);
-				std::cout <<
-				"(Bienvenue sur le serveur, veuillez taper votre pass.)" << std::endl;
+					for (int a = 0; a < Stock->User_Count; a++)
+					{
+						if (new_fd == (popoll + a)->fd)
+							break;
+					}
+					Stock->User_Count++;
+					(popoll + Stock->User_Count - 1)->fd = new_fd;
+					(popoll + Stock->User_Count - 1)->events = POLLIN;
+					(popoll + Stock->User_Count - 1)->revents = 0;
+					Stock->client_fd[Stock->User_Count - 2]  = new_fd;
+					Stock->User = Stock->User_Count - 2;
+				std::cout << "new_fd attribution= " << new_fd << std::endl;
 			}
 			else
 			{
-				std::cout << "start else" << std::endl;
-			/*	i = 0;
-				while (((popoll + i)->revents & POLLIN) != POLLIN)
-					i++;*/
-		//		std::cout << i << std::endl;
-				std::cout << "poll = " << (popoll + i)->fd << std::endl;
-				receive_message((popoll + i)->fd, Stock);
-		//		std::cout << "sock = " << sockfd << std::endl;
-		//		std::cout << "break" << std::endl;
+				for (int a = 0; a < Stock->User_Count; a++)
+				{
+					if (((popoll + a)->revents & POLLIN) == POLLIN)
+					{
+						Stock->User = a - 1;
+						break;
+					}
+				}
+			}
+			std::cout << "stockfd(b) 2 = " << Stock->client_fd[Stock->User] << std::endl;
+			if (Stock->User_Count > 1)
+			{
+				receive_message(Stock->client_fd[Stock->User], Stock);
 				break;
 			}
 		}
