@@ -56,19 +56,23 @@ void Stock::Init_Values( int argc, char **argv )
 
 	this->full_command["PASS"].push_back("PASS");
 	this->full_command["PASS"].push_back("arguement");
+	this->full_command["PASS"].push_back("\0");
 
 	this->full_command["NICK"].push_back("NICK");
 	this->full_command["NICK"].push_back("arguement");
+	this->full_command["NICK"].push_back("\0");
 
 	this->full_command["USER"].push_back("USER");
 	this->full_command["USER"].push_back("username");
 	this->full_command["USER"].push_back("hostname");
 	this->full_command["USER"].push_back("servername");
 	this->full_command["USER"].push_back("realname");
+	this->full_command["USER"].push_back("\0");
 
 	this->full_command["JOIN"].push_back("JOIN");
 	this->full_command["JOIN"].push_back("arguement"); // param A
 	this->full_command["JOIN"].push_back("arguement"); // param B
+	this->full_command["JOIN"].push_back("\0");
 //	Le param A est le nom du chan
 //	Le param B est le mot de pass (key) du chan [optionnel]
 //	JOIN peut posséder des params A et B multiples, le minimum est 1 param

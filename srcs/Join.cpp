@@ -101,7 +101,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 	}
 	o = 0;
 // vérif si channel existe déja
-	for ( int i = 0; Stock->Channel_Count > 0 && i <= Stock->Channel_Count
+	for ( int i = 0; Stock->Channel_Count > 0 && i < (Stock->Channel_Count + 1)
 	&& tmp_Channel[o].compare("\0") != 0; i++)
 	{
 		// si on repere un channel déja existant
@@ -109,6 +109,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 		int yo = 0;
 		std::cout << "yo = " << yo++ << std::endl;
 		std::cout << "Tour = " << i << std::endl;
+		std::cout << "Cannel_Count = " << Stock->Channel_Count << std::endl;
 		std::cout << "Chan = " << (int)tmp_Channel.size() << std::endl;
 		std::cout << "o = " <<  o << std::endl;
 		if (i < Stock->Channel_Count)
@@ -125,29 +126,35 @@ int	JOIN(int poll_fd, Stock * Stock)
 // l'idée, c'est que si key n'existe pas, on mets '\0'
 		{
 			std::cout << "yo = " << yo++ << std::endl;
+			std::cout << "Stock->User = " << Stock->User << std::endl;
 // On part du postulat qu'on a toujours le meme nombre d'info et que l'ordre desdonnées utilisateurs (ip, nick, user) n'a pas d'importance
-			if (Stock->Identities[Stock->User][0] != 
-			Stock->Channels_Users[Stock->Channels[i][0]][0])
+			if (Stock->Channels_Users
+			[Stock->Channels[i][0]][Stock->User] != 
+			Stock->Identities[Stock->User][0])
 			{
-				Stock->Channels_Users
-				[Stock->Channels[i][0]].push_back
-				(Stock->Identities[Stock->User][0]);
 				if (send(poll_fd,
 				"JOIN (existing channel) complete\n\r", 34, 0)
 				== -1)
 					perror("send");
-				it =
+				Stock->Channels_Users
+				[Stock->Channels[i][0]].push_back
+				(Stock->Identities[Stock->User][0]);
+				std::cout << "Le dernier utilisateur est : " <<
+				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User] <<
+				std::endl;
+			}
+		/*		it = -----------           BADLY DESIGNED
 				Stock->Channels_Users
 				[Stock->Channels[i][0]].size();
+				std::cout << "theree" << std::endl;
 				for (int z =
 				Stock->Identities[Stock->User].size(); 
-				z >= it; it++)
+				z > it; it++)
 				{
 					Stock->Channels_Users
 					[Stock->Channels[i][0]].push_back
 					(Stock->Identities[Stock->User][it]);
-				}
-			}
+				}*/
 // le if enregistre l'ip de l'user actuel si il ne l'a pas déja
 // probleme : Je n'enregistre pas le nick et le user 
 
@@ -158,7 +165,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 				perror("send");
 			tmp.clear();*/
 			else if (Stock->Identities[Stock->User][0] == 
-			Stock->Channels_Users[Stock->Channels[i][0]][0])
+			Stock->Channels_Users[Stock->Channels[i][0]][Stock->User])
 			{
 				std::cout << "yo = " << yo++ << std::endl;
 				if (send(poll_fd,
@@ -166,7 +173,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 				== -1)
 					perror("send");
 			}
-			
+
 			if (Stock->Channels[i][2].compare("\0") != 0)
 // 			Channels[i][1] == key
 // 			Channels[i][2] == topic 
@@ -205,36 +212,67 @@ int	JOIN(int poll_fd, Stock * Stock)
 			return (5874);	
 		}
 		else if ( i == Stock->Channel_Count &&
-		o <= (int)tmp_Channel.size() )
+		o < (int)tmp_Channel.size() )
 		{
-			Stock->Channels[i].push_back(tmp_Channel[o]);
-			Stock->Channels[i].push_back("\0");
-			Stock->Channels[i].push_back("\0");
-/*			tmp = Stock->line[0];
-			tmp += ' ';
-			tmp += tmp_Channel[o];
-			if (send(poll_fd, static_cast<void *>(&tmp),
-			tmp.length(), 0) == -1)
-				perror("send");
-			tmp.clear();*/
-			if (send(poll_fd, "(new)JOIN complete\n\r", 20, 0) == -1)
-				perror("send");
-			if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
-				perror("send");
+			for (int check = 0; check <= Stock->Channel_Count; check++)
+			{
+				std::cout << "coucou" << std::endl;
+				std::cout << "channel is " << tmp_Channel[o] << std::endl;
+				std::cout << "Stock->Channel = " << Stock->Channels[check][0] << std::endl;
+				if (tmp_Channel[o] == Stock->Channels[check][0])
+				{
+					i = -1;
+					break;
+				}
+				else if (check + 1 == Stock->Channel_Count)
+				{
+					Stock->Channels[i].push_back(tmp_Channel[o]);
+					Stock->Channels[i].push_back("\0");
+					Stock->Channels[i].push_back("\0");
+	/*				tmp = Stock->line[0];
+					tmp += ' ';
+					tmp += tmp_Channel[o];
+					if (send(poll_fd, static_cast<void *>(&tmp),
+					tmp.length(), 0) == -1)
+						perror("send");
+					tmp.clear();*/
+					if (send(poll_fd, "(new)JOIN complete\n\r", 20, 0) == -1)
+						perror("send");
+					if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
+						perror("send");
+		//     mis a jour des données utilisateurs
+					Stock->Channels_Users
+					[Stock->Channels[i][0]].push_back
+					(Stock->Identities[Stock->User][0]);
+					Stock->Channel_Count++;
+					if (o + 1 < (int)tmp_Channel.size() )
+					{
+						o++;
+						i = -1;
+					}
+					else 
+						tmp_Channel.clear();
+						tmp_Key.clear();
+						Stock->line.clear();
+						return (123456);
+				}
+			}
+	/*		int turn = 0; --------  Commenté parce que je ne sais pas ou je vais avec ca, dans le cas ou on doit utiliser tout les id d'un user
 			it =
-			Stock->Channels_Users[Stock->Channels[i][0]].size()+ 1;
+			Stock->Channels_Users[Stock->Channels[i][0]].size();
 			for (int z = Stock->Identities[Stock->User].size();
 			z > it; it++)
 			{
-				
-				Stock->Channels_Users
-				[Stock->Channels[i][0]].push_back
-				(Stock->Identities[Stock->User][it]);
-				if (send(poll_fd,
-				"JOIN (known channel) complete\n\r", 31, 0)
-				== -1)
-					perror("send");
-			}
+				if (turn == 0)
+				{
+					Stock->Channels_Users
+					[Stock->Channels[i][0]].push_back
+					(Stock->Identities[Stock->User][it]);
+					if (send(poll_fd,
+					"JOIN (known channel) complete\n\r", 31, 0)
+					== -1)
+						perror("send");
+			}*/
 		/*	if (Stock->Identities[Stock->User][0].empty() == 0)
 			{
 				std::cout << "blague" << std::endl;
@@ -243,9 +281,6 @@ int	JOIN(int poll_fd, Stock * Stock)
 				(Stock->Identities[Stock->User][0]);
 			}*/
 			std::cout << "fin" << std::endl;
-			Stock->Channel_Count++;
-			o++;
-			i = -1;
 		}
 	/*	if ( o == (int)tmp_Channel.size() )
 		{

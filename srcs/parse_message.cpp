@@ -12,22 +12,25 @@ int	command_check(int poll_fd, Stock *Stock)
 	std::cout << "before boucle " << yo++ << std::endl;
 	while (!Stock->all_commands[i].empty())
 	{	
-		std::cout << "iinside " << yo++ << std::endl;
+		std::cout << "iinside " << yo++ << " && line = " << Stock->line.size() << std::endl;
 		if (Stock->line[0] == Stock->all_commands[i])  
 		{
 			if (Stock->line[1].size() > 0)
-			{
+			{		
+				std::cout << "before pass " << yo++ << std::endl;
 				if (Stock->line[0] == Stock->all_commands[0]
-				&& Stock->line[2].empty() != 0)
+				&& Stock->line.size() == Stock->full_command["PASS"].size())
 				{
+					std::cout << "inside pass " << yo++ << std::endl;
 					PASS(poll_fd, Stock);
 					return (0);
 				}
 				if (Stock->line[0] == Stock->all_commands[1]
-				&& Stock->line[2].empty() != 0
+				&& Stock->line.size() == Stock->full_command["NICK"].size()
 				&& (Stock->tmp_authentified[Stock->User] == 1
 				| Stock->authentified[Stock->User] == 1))
 				{
+					std::cout << "inside nick " << yo++ << std::endl;
 					NICK(poll_fd, Stock);
 					return (0);
 				}
@@ -37,18 +40,25 @@ int	command_check(int poll_fd, Stock *Stock)
 				| Stock->authentified == 1))*/
 
 // une fois pass, nick et user de fait, authentified = 1
+		//		if (Stock->tmp_authentified[Stock->User] = 3
+				if (Stock->tmp_authentified[Stock->User] == 2)
+				{
+					Stock->authentified[Stock->User] = 1;
+// on doit ajouter un null a la fin de Identities pour le rendre viable
+					Stock->Identities[Stock->User].push_back("\0");
+				}
 
 				if ((Stock->line[0] == Stock->all_commands[3]
-				&& Stock->line[2].empty() != 0
+				&& Stock->line.size() == Stock->full_command["JOIN"].size() - 1
 				&& Stock->authentified[Stock->User] == 1) |
 				(Stock->line[0] == Stock->all_commands[3]
-				&& Stock->line[2].size() > 0
-				&& Stock->line[3].empty() != 0
+				&& Stock->line.size() == Stock->full_command["JOIN"].size()
 				&& Stock->authentified[Stock->User] == 1))
 				{
 					JOIN(poll_fd, Stock);
 					return (0);
 				}
+
 				if (Stock->authentified[Stock->User] == 0)
 				{
 					if (send(poll_fd, "Bad Usage: You're not authorized !\n\r", 37, 0) == -1)
