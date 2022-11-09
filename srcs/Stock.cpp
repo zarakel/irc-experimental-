@@ -54,6 +54,10 @@ void Stock::Init_Values( int argc, char **argv )
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
+	tmp = "PRIVMSG"; // Stock->all_commands[4]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
 	this->full_command["PASS"].push_back("PASS");
 	this->full_command["PASS"].push_back("arguement");
 	this->full_command["PASS"].push_back("\0");
@@ -76,6 +80,11 @@ void Stock::Init_Values( int argc, char **argv )
 //	Le param A est le nom du chan
 //	Le param B est le mot de pass (key) du chan [optionnel]
 //	JOIN peut posséder des params A et B multiples, le minimum est 1 param
+
+	this->full_command["PRIVMSG"].push_back("JOIN");
+	this->full_command["PRIVMSG"].push_back("arguement");
+	this->full_command["PRIVMSG"].push_back("arguement");
+	this->full_command["PRIVMSG"].push_back("\0");
 
 	this->User = 0;
 	this->User_Count = 0;

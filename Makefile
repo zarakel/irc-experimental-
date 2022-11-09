@@ -34,7 +34,7 @@ PATH_OBJS		= objs/
 HEADER_LIST		= 
 
 SRC_LIST		= main.cpp Stock.cpp server.cpp parse_message.cpp \
-			passCmd.cpp nickCmd.cpp User.cpp Join.cpp
+			passCmd.cpp nickCmd.cpp User.cpp Join.cpp Privmsg.cpp
 
 OBJ			= $(addprefix $(PATH_OBJS), $(SRC_LIST:.cpp=.o))
 

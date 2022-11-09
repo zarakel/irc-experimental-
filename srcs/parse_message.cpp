@@ -58,6 +58,13 @@ int	command_check(int poll_fd, Stock *Stock)
 					JOIN(poll_fd, Stock);
 					return (0);
 				}
+				if ((Stock->line[0] == Stock->all_commands[4]
+				&& Stock->line.size() == Stock->full_command["PRIVMSG"].size()
+				&& Stock->authentified[Stock->User] == 1))
+				{
+					PRIVMSG(poll_fd, Stock);
+					return (0);
+				}
 
 				if (Stock->authentified[Stock->User] == 0)
 				{
