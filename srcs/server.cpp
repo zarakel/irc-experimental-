@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/08 15:27:58 by operculesangu    ###   ########.fr       */
+/*   Updated: 2022/11/10 16:54:12 by operculesangu    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,11 @@ if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
 			}
 			else
 			{
+				// j'imagine plusieurs choses pour gérer le cas ou un ctr + c est fait d'un terminal :
+				// Avec signal, transformer les ctrl+c en kill ou close du fd utilisé
+				// Utiliser un Ping/Pong like pour determiner que le fd ne fonctionne plus correctement (?)
+				// le probleme actuel est que le serveur passe par le else direct et ainsi crée des erreurs potentielles
+				// cas étrange, si on recoit d'autre connection, elles ne sont pas reconnues
 				for (int a = 0; a < Stock->User_Count; a++)
 				{
 					if (((popoll + a)->revents & POLLIN) == POLLIN)
