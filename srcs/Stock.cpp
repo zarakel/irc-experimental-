@@ -1,5 +1,5 @@
 #include "../headers/Stock.hpp"
-#include "../headers/error.hpp"
+//#include "../headers/error.hpp"
 
 Stock::Stock( void ){ return; }
 
@@ -33,7 +33,10 @@ Stock & Stock::operator=( Stock const & cp )
 void Stock::Init_Values( int argc, char **argv )
 {
 	if ( argc != 3 )
-		throw errorExcute("Usage: ./ircserv <port> <password> \n");
+	{
+		std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
+		exit(0);
+	}
 	this->port = Check_Port(argv[1]);
 //	check_password(argv[2]);
 	this->pass = argv[2];
@@ -55,6 +58,10 @@ void Stock::Init_Values( int argc, char **argv )
 	tmp.clear();
 
 	tmp = "PRIVMSG"; // Stock->all_commands[4]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	tmp = "MODE"; // Stock->all_commands[5]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
@@ -81,10 +88,16 @@ void Stock::Init_Values( int argc, char **argv )
 //	Le param B est le mot de pass (key) du chan [optionnel]
 //	JOIN peut posséder des params A et B multiples, le minimum est 1 param
 
-	this->full_command["PRIVMSG"].push_back("JOIN");
+	this->full_command["PRIVMSG"].push_back("PRIVMSG");
 	this->full_command["PRIVMSG"].push_back("\0");
 	this->full_command["PRIVMSG"].push_back("\0");
 	this->full_command["PRIVMSG"].push_back("\0");
+
+
+	this->full_command["MODE"].push_back("MODE");
+	this->full_command["MODE"].push_back("\0");
+	this->full_command["MODE"].push_back("\0");
+	this->full_command["MODE"].push_back("\0");
 
 	this->User = 0;
 	this->User_Count = 0;
@@ -107,10 +120,16 @@ char	*Stock::Check_Port( char *port )
 	int     i;
 
 	if (!this->Is_Number(port))
-		throw errorExcute("Usage: <port> must be numeric");
+	{
+		std::cerr << "Usage: <port> must be numeric" << std::endl;
+		exit(0);
+	}
 	i = atoi( port );
 	if ( i < 0 || i > 65535 )
-		throw errorExcute("Usage: <port> can't be 0, negative or more than 65535");
+	{
+		std::cerr << "Usage: <port> can't be 0, negative or more than 65535" << std::endl;
+		exit(0);
+	}
 // peut être faire une fonction qui vérifie si les ports sont utilisés ou pas
 	return (port);	
 }

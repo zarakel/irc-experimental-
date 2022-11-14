@@ -1,5 +1,4 @@
 #include "../headers/headers.hpp"
-#include <cstdlib>
 #include "../headers/Server.hpp"
 
 /*void	check_password( std::string pass_tmp ) -- Secu a ajouter 

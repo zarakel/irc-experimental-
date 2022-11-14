@@ -21,6 +21,7 @@ class Stock
 	std::vector<std::string> line;
 	std::vector<std::string> all_commands;
 	std::vector<std::string> Nicks;
+	std::vector<std::string> Flag;
 
 	std::map<int, std::vector<std::string> > Channels; // le int correspond a l'ordre de création des channels
 //	[0] = nom de chan, [1] = key, [2] = topic

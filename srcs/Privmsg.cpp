@@ -19,7 +19,7 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 			break;
 		}
 
-		else if (search + 1 == (int)Stock->Identities.size() + Stock->Channel_Count)
+		else if (search + 1 == (int)Stock->Identities.size() + Stock->Channel_Count && (user_check == -1 && channel_check == -1))
 		{
 			if (send(poll_fd, "Bad params: The user isn't found\r\n", 34, 0) == -1)
 				perror("send :");
@@ -36,7 +36,6 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 		return (412);
 	}
 
-	
 	if (user_check >= 0)
 	{
 		std::cout << "l'user est " << Stock->line[1] << std::endl;
@@ -50,12 +49,9 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 				}
 			}*/
 			std::cout << "Stock->client_fd[" << user_check << "] = " << Stock->client_fd[user_check] << std::endl;
-			int me_check = 0;
-			while(poll_fd != Stock->client_fd[me_check])
-				me_check++;
-			std::string tmp = Stock->Identities[me_check][0];
-			tmp += " : ";
-			tmp = Stock->line[2];
+			std::string tmp = Stock->Identities[user_check][0];
+			tmp += ": ";
+			tmp += Stock->line[2];
 			tmp += '\n';
 			if (send(Stock->client_fd[user_check], static_cast<void *>(&tmp), tmp.size() + 1, 0) == -1)
 				perror("send :");

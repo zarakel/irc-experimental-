@@ -1,6 +1,6 @@
+#ifndef ERROR_HPP
+# define ERROR_HPP
 # include "User.hpp"
-
-std::map<int, std::string>	err;
 
 // ERRORS
 
@@ -50,17 +50,8 @@ class errorExcute : public std::exception {
         errorExcute(const char * str) : _strerror(str) {};
         const char * what() const throw() {return _strerror; };
 };
+class User;
+void	errorMessage( User user, int numReply, std::string arg);
+void	errorMessageG( int fd, int numReply, std::string arg);
 
-void errorMessage( User user, int numReply, std::string arg)
-{
-	std::ostringstream s;
-
-	if (*(arg.end() - 1) == '\n')
-		arg = arg.substr(0, arg.length() - 1);
-	s << ":mfirc " << numReply << " * " << arg << err[numReply] << "\r\n";
-
-	std::string msg = s.str();
-
-	if ( send(user.getFd(), &msg[0], msg.size(), 0) == -1 )
-		throw errorExcute(strerror(errno));
-}
+#endif

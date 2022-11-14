@@ -5,7 +5,16 @@ int	NICK(int poll_fd, Stock *Stock)
 {
 	int yo = 0;
 	std::cout << yo++ << std::endl;
-	
+	std::string upper;
+	std::string lower;
+
+// essai pour rendre nick case insensitive
+
+/*	for (int i = 0; Stock->line[1][i], i++)
+	{
+		if (Stock->line[1][i] >= 97 && Stock->line[1][i] <= 122)
+			
+	}*/
 	if (Stock->line[1].length() > 0 && Stock->line[2].empty()
 	&& Stock->Nicks.empty() == 0)
 	{
@@ -40,8 +49,7 @@ int	NICK(int poll_fd, Stock *Stock)
 	&& Stock->Identities[Stock->User][0].empty() == 0
 	&& Stock->Identities[Stock->User][0].compare(Stock->line[1]) != 0)
 	{
-		Stock->Identities[Stock->User].pop_back();
-		Stock->Identities[Stock->User].push_back(Stock->line[1]);
+		Stock->Identities[Stock->User][0] = Stock->line[1];
 		Stock->Nicks[Stock->User].clear();
 		Stock->Nicks[Stock->User] = Stock->line[1];
 		if (send(poll_fd, "All Good: Your nick have changed !\n\r", 35, 0) == -1)
@@ -64,5 +72,6 @@ int	NICK(int poll_fd, Stock *Stock)
 			perror("send");
 		Stock->line.clear();
 	}
+	Stock->line.clear();
 	return (0);
 }

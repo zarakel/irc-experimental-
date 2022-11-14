@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/10 16:54:12 by operculesangu    ###   ########.fr       */
+/*   Updated: 2022/11/14 20:42:10 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,16 +79,16 @@ int server(Stock *Stock)
 	socklen_t sin_size;
 	struct sigaction sa;
 	int yes=1;
-char s[INET6_ADDRSTRLEN];
-int rv;
+	char s[INET6_ADDRSTRLEN];
+	int rv;
 
-std::cout << "Le pass est censé être : " << Stock->pass << std::endl;
-memset(&hints, 0, sizeof hints);
-hints.ai_family = AF_UNSPEC;
-hints.ai_socktype = SOCK_STREAM;
-hints.ai_flags = AI_PASSIVE; // use my IP
+	std::cout << "Le pass est censé être : " << Stock->pass << std::endl;
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE; // use my IP
 
-if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
+	if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
 		return 1;
@@ -195,7 +195,7 @@ if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
 				// cas étrange, si on recoit d'autre connection, elles ne sont pas reconnues
 				for (int a = 0; a < Stock->User_Count; a++)
 				{
-					if (((popoll + a)->revents & POLLIN) == POLLIN)
+					if ((popoll + a)->revents & POLLIN)// == POLLIN)
 					{
 						Stock->User = a - 1;
 						break;
@@ -205,7 +205,11 @@ if ((rv = getaddrinfo(NULL, Stock->port, &hints, &servinfo)) != 0)
 			std::cout << "stockfd(b) 2 = " << Stock->client_fd[Stock->User] << std::endl;
 			if (Stock->User_Count > 1)
 			{
-				receive_message(Stock->client_fd[Stock->User], Stock);
+			std::cout << "revents = " << (popoll + i)->revents << std::endl;
+				if(recv(Stock->client_fd[Stock->User], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
+					receive_message(Stock->client_fd[Stock->User], Stock);
+				else
+					close(Stock->client_fd[Stock->User]);
 				break;
 			}
 		}
