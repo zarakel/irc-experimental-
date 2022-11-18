@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/14 20:42:10 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/18 11:04:31 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,10 +206,13 @@ int server(Stock *Stock)
 			if (Stock->User_Count > 1)
 			{
 			std::cout << "revents = " << (popoll + i)->revents << std::endl;
-				if(recv(Stock->client_fd[Stock->User], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
+			//	if(recv(Stock->client_fd[Stock->User], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
+			//	{
 					receive_message(Stock->client_fd[Stock->User], Stock);
-				else
-					close(Stock->client_fd[Stock->User]);
+				//	command_check(Stock->client_fd[Stock->User], Stock);
+			//	}
+			//	else
+			//		close(Stock->client_fd[Stock->User]);
 				break;
 			}
 		}

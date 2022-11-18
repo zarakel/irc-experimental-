@@ -49,15 +49,15 @@ int	JOIN(int poll_fd, Stock * Stock)
 			tmp.clear();
 		}
 		if (Stock->line[1][i + 1] == ',' &&
-		(Stock->line[1][i + 2] == '#' | Stock->line[1][i + 2] == '&'
-		| Stock->line[1][i + 2] == '+' | Stock->line[1][i + 2] == '!'))
+		(Stock->line[1][i + 2] == '#' || Stock->line[1][i + 2] == '&'
+		|| Stock->line[1][i + 2] == '+' || Stock->line[1][i + 2] == '!'))
 		{
 			i++;
 			it++;
 		}
 		else if (Stock->line[1][i + 1] == ',' &&
-	(Stock->line[1][i + 2] != '#' | Stock->line[1][i + 2] != '&'
-	| Stock->line[1][i + 2] != '+' | Stock->line[1][i + 2] != '!'))
+	(Stock->line[1][i + 2] != '#' || Stock->line[1][i + 2] != '&'
+	|| Stock->line[1][i + 2] != '+' || Stock->line[1][i + 2] != '!'))
 		{
 			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
 				perror("send");
@@ -74,7 +74,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 	for ( int i = 0; Stock->line[2][i] && 
 	Stock->line[2][i] != '\n' | Stock->line[2][i] != '\r'; i++)
 	{
-		if (Stock->line[2][i] == ' ' | Stock->line[2][i] == 7)
+		if (Stock->line[2][i] == ' ' || Stock->line[2][i] == 7)
 		{
 			if (send(poll_fd, "Bad Param: key contain wrong characters\r\n", 41, 0) == -1)
 				perror("send");
@@ -249,6 +249,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 					{
 						o++;
 						i = -1;
+						break;
 					}
 					else 
 						tmp_Channel.clear();

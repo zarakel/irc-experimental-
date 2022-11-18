@@ -11,19 +11,33 @@ int	command_check(int poll_fd, Stock *Stock)
 	std::cout << "before boucle " << yo++ << std::endl;
 	for (size_t i = 0; i <= Stock->all_commands.size(); i++)
 	{	
+//		receive_message(poll_fd, Stock);
 		std::cout << "iinside " << yo++ << " && line = " << Stock->line.size() << std::endl;
 		if (Stock->line[1].size() > 0 && i < Stock->all_commands.size())
 		{		
 			std::cout << "before pass " << yo++ << std::endl;
+//			for (size_t a = 0; a < Stock->line.size(); a++)
+//				std::cout << Stock->line[a] << std::endl;
+	/*		if (Stock->line[0] == "CAP" && Stock->line[1] == "LS")
+			{
+				//Stock->line.clear();
+				if (send(poll_fd, "CAP * LS :\n", 11, 0) == -1)
+					perror("send: ");
+				Stock->line.clear();
+		//		receive_message(poll_fd, Stock);
+				for (size_t a = 0; a < Stock->line.size(); a++)
+					std::cout << Stock->line[a] << std::endl;
+			//	exit(0);
+			}*/
+		//	receive_message(poll_fd, Stock);
 			if (Stock->line[0] == Stock->all_commands[0]
 			&& Stock->line.size() == Stock->full_command["PASS"].size())
 			{
 				std::cout << "inside pass " << yo++ << std::endl;
 				PASS(poll_fd, Stock);
-				exit(0);
 				return (0);
 			}
-
+	//		Stock->tmp_authentified[Stock->User] = 1;
 			std::cout << "lo " << yo++ << std::endl;
 			if (Stock->line[0] == Stock->all_commands[1]
 			&& Stock->line.size() == Stock->full_command["NICK"].size()
@@ -34,19 +48,19 @@ int	command_check(int poll_fd, Stock *Stock)
 				NICK(poll_fd, Stock);
 				return (0);
 			}
-/*				if (Stock->line[0] == Stock->all_commands[2]
-		//	&& Stock->line.size() == Stock->full_command["USER"].size()
+			if (Stock->line[0] == Stock->all_commands[2]
+			&& Stock->line.size() == Stock->full_command["USER"].size()
 			&& (Stock->tmp_authentified[Stock->User] == 2
 			| Stock->authentified[Stock->User] == 1))
 			{
 				USER(poll_fd, Stock);
 				return (0);
-			}*/
+			}
 // une fois pass, nick et user de fait, authentified = 1
 			std::cout << "li " << yo++ << std::endl;
-			if (Stock->tmp_authentified[Stock->User] == 2)
+//			if (Stock->tmp_authentified[Stock->User] == 2)
 // tant que user marche pas	
-//				if (Stock->tmp_authentified[Stock->User] == 3)
+			if (Stock->tmp_authentified[Stock->User] == 3)
 			{
 				Stock->authentified[Stock->User] = 1;
 // on doit ajouter un null a la fin de Identities pour le rendre viable
@@ -93,6 +107,8 @@ int	command_check(int poll_fd, Stock *Stock)
 				std::cout << "inside 0 auth " << yo++ << std::endl;
 				if (send(poll_fd, "Bad Usage: You're not authorized !\n\r", 37, 0) == -1)
 					perror("send");
+				for (size_t a = 0; a <= Stock->line.size(); a++)
+					std::cout << Stock->line[a] << std::endl;
 				Stock->line.clear();
 				return (565);
 			}
@@ -109,7 +125,7 @@ int	command_check(int poll_fd, Stock *Stock)
 		else 
 		{
 			std::cout << "else end " << yo++ << std::endl;
-			if (send(poll_fd, "Bad Param': On refait bien la, oh !\n\r", 37, 0) == -1)
+			if (send(poll_fd, "Bad Command: Faites un effort, voyons.\n\r", 40, 0) == -1)
 				perror("send");
 			Stock->line.clear();
 			return (598);
@@ -137,10 +153,10 @@ int	receive_message(int poll_fd, Stock *Stock)
 		perror("recv :");
 		return (10);
 	}
-	for (int it = 0; ((buf[it] != '\n' | buf[it] != '\r') && it <= 512) ; 			it++)
+	for (int it = 0; ((buf[it] != '\n' | buf[it] != '\r') && it <= 512) ; it++)
 	{
-		if (buf[it] == ':' && (buf[it + 1] != ' ' | buf[it + 1] != '\n'
-			| buf[it + 1] != '\r'))
+		if (buf[it] == ':' && (buf[it + 1] == ' ' | buf[it + 1] == '\n'
+			| buf[it + 1] == '\r'))
 		{
 			if (send(poll_fd, "Bad Message: Deux points, c'est zéro.\n\r", 39, 0) == -1)
 				perror("send");
@@ -159,16 +175,20 @@ int	receive_message(int poll_fd, Stock *Stock)
 			if (buf[it + 2] == '\n' | buf[it + 2] == '\r')
 				break;
 		}
-		if (buf[it + 1] == ':')
+		if (buf[it + 1] == ':' && buf[it + 2] != '\0')
 		{
-			if (send(poll_fd, "Bad Message: Deux points, c'est zéro.\n\r", 39, 0) == -1)
-				perror("send");
+			it += 2 ;
+			for (size_t end = it; buf[end] != '\n'; end++)
+				Stock->word.push_back(buf[end]);
+//			Stock->word += "\n\r";
+			Stock->line.push_back(Stock->word);
+			Stock->line.push_back("\0"); // NULL pour savoir quand fin vector
 			Stock->word.clear();
-			Stock->line.clear();
-			return (11);
+			break;
 		}	
 		if (buf[it + 1] == '\n' | buf[it + 1] == '\r')
 		{
+//			Stock->word += "\n\r";
 			Stock->line.push_back(Stock->word);
 			Stock->line.push_back("\0"); // NULL pour savoir quand fin vector
 			Stock->word.clear();
@@ -178,14 +198,14 @@ int	receive_message(int poll_fd, Stock *Stock)
 		}
 		else if (buf[it + 1] == '\0')
 			it += 2;
-/*		if (it > 512)
+		if (it > 512)
 		{
 			if (send(poll_fd, "Message too long: C'est plus que Levis quand même\n\r", 50, 0) == -1)
 				perror("send");
 			Stock->word.clear();
 			Stock->line.clear();
 			return (19);
-		}	*/
+		}	
 	}
 	command_check(poll_fd, Stock);
 	return (0);

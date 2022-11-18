@@ -5,6 +5,8 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 {
 	int user_check = -1;
 	int channel_check = -1;
+	std::string tmp;
+
 	for (int search = 0; search < (int)Stock->Identities.size() + Stock->Channel_Count; search++) // boucle user
 	{
 		if (search < (int)Stock->Identities.size() && Stock->line[1] == Stock->Identities[search][0])
@@ -49,12 +51,23 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 				}
 			}*/
 			std::cout << "Stock->client_fd[" << user_check << "] = " << Stock->client_fd[user_check] << std::endl;
-			std::string tmp = Stock->Identities[user_check][0];
+			std::cout << Stock->Identities[user_check][0] << std::endl;
+			std::cout << Stock->line[2] << std::endl;
+			tmp = Stock->Identities[user_check][0];
 			tmp += ": ";
 			tmp += Stock->line[2];
-			tmp += '\n';
-			if (send(Stock->client_fd[user_check], static_cast<void *>(&tmp), tmp.size() + 1, 0) == -1)
+			tmp += "\n\r\0";
+			size_t size = tmp.size();
+			std::cout << tmp << " && size = " << size << std::endl;
+/*			if (send(Stock->client_fd[user_check], static_cast<void *>(&tmp), size - 1, 0) == -1)
 				perror("send :");
+			if (send(Stock->client_fd[user_check], "\n", 1, 0) == -1)
+				perror("send :");*/
+			for (size_t c = 0; c < size; c++)
+			{
+				if (send(Stock->client_fd[user_check], &tmp[c], 1, 0) == -1)
+				perror("send :");
+			}
 	}
 	int chan_roll = 0;
 	if (channel_check >= 0)
