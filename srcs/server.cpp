@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/22 15:33:34 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/22 16:06:01 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,14 +181,14 @@ int server(Stock *Stock)
 				{
 					if (new_fd == (popoll + a)->fd)
 					{
-						std::cout << "fd is " << new_fd << std::endl;
+					//	std::cout << "fd is " << new_fd << std::endl;
 						break;
 					}
 					if (a + 1 == Stock->User_Count)
 					{
-				std::cout << "before = " << Stock->User_Count - 2 << std::endl;
+			//	std::cout << "before = " << Stock->User_Count - 2 << std::endl;
 				Stock->User_Count++;
-				std::cout << "after = " << Stock->User_Count - 2 << std::endl;
+				//std::cout << "after = " << Stock->User_Count - 2 << std::endl;
 				(popoll + Stock->User_Count - 1)->fd = new_fd;
 				(popoll + Stock->User_Count - 1)->events = POLLIN;
 				(popoll + Stock->User_Count - 1)->revents = 0;

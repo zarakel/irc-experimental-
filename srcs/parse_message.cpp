@@ -63,8 +63,8 @@ int	command_check(int poll_fd, Stock *Stock)
 					if (send(poll_fd, (&tmp[b]), 1, 0) == -1)
 						perror("send: ");
 				}
-				std::cout << "fd is " << Stock->client_fd[Stock->User]
-				<< std::endl;
+			/*	std::cout << "fd is " << Stock->client_fd[Stock->User]
+				<< std::endl;*/
 				tmp.clear();
 			}
 				return (1);

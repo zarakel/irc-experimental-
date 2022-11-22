@@ -6,7 +6,7 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 	int user_check = -1;
 	int channel_check = -1;
 	std::string tmp;
-	size_t size = (Stock->Identities.size() <= (size_t)Stock->Channel_Count) ?
+	size_t size = (Stock->Identities.size() >= (size_t)Stock->Channel_Count) ?
 	Stock->Identities.size() : (size_t)Stock->Channel_Count;
 
 	for (size_t search = 0; search < size; search++) // boucle user
