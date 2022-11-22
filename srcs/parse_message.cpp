@@ -41,7 +41,7 @@ int	command_check(int poll_fd, Stock *Stock)
 //			&& Stock->line.size() == Stock->full_command["PING"].size())
 			{
 				PING(poll_fd, Stock);
-			//	return (0);
+				return (0);
 			}
 
 			if (Stock->line[0] == Stock->all_commands[0]

@@ -19,6 +19,7 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 
 		if (search < (size_t)Stock->Channel_Count && Stock->line[1] == Stock->Channels[search][0])
 		{
+			
 			channel_check = search;
 			break;
 		}
@@ -32,13 +33,13 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 		}
 	}
 
-	if (Stock->line[2] == "\0")
+/*	if (Stock->line[2].compare("\0") == 0)
 	{
 		if (send(poll_fd, "Bad params: No text to send\r\n", 29, 0) == -1)
 			perror("send :");
 		Stock->line.clear();
 		return (412);
-	}
+	}*/
 
 	if (user_check >= 0)
 	{
@@ -92,12 +93,19 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 				std::string tmp = Stock->Identities[me_check][0];
 				tmp += " : ";
 				tmp += Stock->line[2];
-				tmp += '\n';
+				tmp += "\n\r\0";
+				size_t size = tmp.size();
 //				std::cout << "bouh" << std::endl;
-				if (send(Stock->client_fd[i], static_cast<void *>(&tmp), tmp.size() + 1, 0) == -1)
+				for (size_t c = 0; c < size; c++)
+				{
+					if (send(Stock->client_fd[chan_roll], &tmp[c], 1, 0) == -1)
 					perror("send :");
+				}
+				size = 0;
+		/*		if (send(Stock->client_fd[i], static_cast<void *>(&tmp), tmp.size() + 1, 0) == -1)
+					perror("send :");*/
 				tmp.clear();
-				Stock->line.clear();
+			//	Stock->line.clear();
 			//	return (1);
 			}
 			chan_roll = 0;

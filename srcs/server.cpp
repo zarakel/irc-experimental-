@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/22 16:06:01 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/22 19:51:09 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,12 +212,14 @@ int server(Stock *Stock)
 					}
 				}
 			}
+			
 			if (Stock->User_Count > 1)
 			{
 				if(recv(Stock->client_fd[Stock->User], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
 				{
 					if (receive_message(Stock->client_fd[Stock->User], Stock) == 0)
 					{
+						std::cout << Stock->client_fd[Stock->User] << std::endl;
 						command_check(Stock->client_fd[Stock->User], Stock);
 					}
 				}
@@ -235,8 +237,9 @@ int server(Stock *Stock)
 					std::cout << "héhé boy" << std::endl;*/
 					close(Stock->client_fd[Stock->User]);
 				}
-				break;
+//				break;
 			}
+//			break;
 		}
 	}
 	return 0;
