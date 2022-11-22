@@ -40,13 +40,16 @@ class Stock
 	std::string pass;
 	std::string word;
 	int	nick_already_set[100]; // Chaque [int] est à associé à Stock->User, qui permet d'associé les données d'un client à un int dédié
-	int	tmp_authentified[100];
+	int	tmp_pass[100];
+	int	tmp_nick[100];
+	int	tmp_user[100];
 	int	authentified[100];
 	int	client_fd[100];
 	int	User;
 	int	Channel_Count; // Channel_Count commencera par 1 pour dire qu'1 	channel a été crée, nous dit comebien de channels sont crées
 	int	User_Count; // Pareil qu'au dessus
 	int	fd_count;
+	int	sockfd;
 };
 
 #endif

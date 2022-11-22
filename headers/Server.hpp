@@ -5,7 +5,7 @@
 
 void    sigchld_handler( void );
 void    *get_in_addr(struct sockaddr *sa);
-void    Check_ID(Stock *Stock, char *s, int new_fd);
+int    Check_FD(Stock *Stock, struct pollfd *popoll);
 int     server(Stock *Stock);
 
 #endif

@@ -24,7 +24,9 @@ Stock & Stock::operator=( Stock const & cp )
 	{
 		this->nick_already_set[i] = cp.nick_already_set[i];
 		this->authentified[i] = cp.authentified[i];
-		this->tmp_authentified[i] = cp.tmp_authentified[i];
+		this->tmp_pass[i] = cp.tmp_pass[i];
+		this->tmp_nick[i] = cp.tmp_nick[i];
+		this->tmp_user[i] = cp.tmp_user[i];
 		this->client_fd[i] = cp.client_fd[i];
 	}
 	return *this;
@@ -40,6 +42,8 @@ void Stock::Init_Values( int argc, char **argv )
 	this->port = Check_Port(argv[1]);
 //	check_password(argv[2]);
 	this->pass = argv[2];
+
+//	this->Nicks.push_back("\0");;
 
 	std::string tmp = "PASS"; // Stock->all_commands[0]
 	this->all_commands.push_back(tmp);
@@ -62,6 +66,11 @@ void Stock::Init_Values( int argc, char **argv )
 	tmp.clear();
 
 	tmp = "MODE"; // Stock->all_commands[5]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	
+	tmp = "PING"; // Stock->all_commands[6]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
@@ -99,6 +108,11 @@ void Stock::Init_Values( int argc, char **argv )
 	this->full_command["MODE"].push_back("\0");
 	this->full_command["MODE"].push_back("\0");
 
+	
+	this->full_command["PING"].push_back("PING");
+	this->full_command["PING"].push_back("\0");
+	this->full_command["PING"].push_back("\0");
+
 	this->User = 0;
 	this->User_Count = 0;
 	this->Channel_Count = 0;
@@ -107,7 +121,9 @@ void Stock::Init_Values( int argc, char **argv )
 	{
 		this->nick_already_set[i] = 0;
 		this->authentified[i] = 0;
-		this->tmp_authentified[i] = 0;
+		this->tmp_nick[i] = 0;
+		this->tmp_pass[i] = 0;
+		this->tmp_user[i] = 0;
 		this->client_fd[i] = 0;
 	}
 }

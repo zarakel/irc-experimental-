@@ -3,8 +3,7 @@
 
 int	NICK(int poll_fd, Stock *Stock)
 {
-	int yo = 0;
-	std::cout << yo++ << std::endl;
+//	int yo = 0;
 	std::string upper;
 	std::string lower;
 
@@ -16,9 +15,9 @@ int	NICK(int poll_fd, Stock *Stock)
 			
 	}*/
 	if (Stock->line[1].length() > 0 && Stock->line[2].empty()
-	&& Stock->Nicks.empty() == 0)
+	&& Stock->Nicks.size() > 0)
 	{
-		for (int i = 0; Stock->Nicks[i].empty() == 0; i++)
+		for (int i = 0; i < (int)Stock->Nicks.size(); i++)
 		{
 			if ( i == Stock->User )
 				i++;
@@ -32,17 +31,18 @@ int	NICK(int poll_fd, Stock *Stock)
 		}
 	}
 	if (Stock->line[1].length() > 0 && Stock->line[2].empty() 
-	&& Stock->Identities[Stock->User].empty())
+	&& Stock->Identities[Stock->User].size() == 0)
 	{
-		std::cout << yo++ << std::endl;
+	//	std::cout << "coucou" << std::endl;
+	//	std::cout << yo++ << std::endl;
 		Stock->Identities[Stock->User].push_back(Stock->line[1]);
 		Stock->Nicks.push_back(Stock->line[1]);
-		std::cout << yo++ << std::endl;
-		if (send(poll_fd, "All Good: Your nick is set !\n\r", 29, 0) == -1)
-			perror("send");
+	//	std::cout << yo++ << std::endl;
+//		if (send(poll_fd, "All Good: Your nick is set !\n\r", 29, 0) == -1)
+//			perror("send");
 		Stock->line.clear();
 		Stock->nick_already_set[Stock->User] = 1;
-		Stock->tmp_authentified[Stock->User] = 2;
+		Stock->tmp_nick[Stock->User] = 1;
 		return (20);
 	}
 	else if (Stock->line[1].length() > 0 && Stock->line[2].empty() 

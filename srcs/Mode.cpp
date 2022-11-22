@@ -6,25 +6,27 @@ int MODE(int poll_fd, Stock *Stock)
 {
 	int user_check = -1;
 	int chan_check = -1;
+	size_t size = (Stock->Identities.size() <= (size_t)Stock->Channel_Count) ?
+	Stock->Identities.size() : (size_t)Stock->Channel_Count;
 
-	for (int search = 0; search < (int)Stock->Identities.size()
-	+ Stock->Channel_Count; search++)
+	
+	for (size_t search = 0; search < size; search++)
 	{
-		if (search < (int)Stock->Identities.size() && Stock->line[1] == Stock->Identities[search][0])
+		if (search < Stock->Identities.size() && Stock->line[1] == Stock->Identities[search][0])
 		{
 			user_check = search;
 			break;
 		}
 		
-		if (search < Stock->Channel_Count && Stock->line[1] == Stock->Channels[search][0])
+		if (search < (size_t)Stock->Channel_Count && Stock->line[1] == Stock->Channels[search][0])
 		{
 			chan_check = search;
 			break;
 		}
-		if (search + 1 == (int)Stock->Identities.size() + Stock->Channel_Count && user_check && (user_check == -1 && chan_check == -1))
+		if (search + 1 == size && user_check && (user_check == -1 && chan_check == -1))
 		{
 			errorMessageG(poll_fd, ERR_USERSDONTMATCH, ": User's nick don't match ");
-			std::cout << "coucou" << std::endl;
+			Stock->line.clear();
 			return (1);
 		}
 	}
@@ -47,11 +49,13 @@ int MODE(int poll_fd, Stock *Stock)
 	{
 		Stock->Flag[user_check] = Stock->line[2];
 		std::string tmp = Stock->line[2];
-	//	tmp += '\n';
+		tmp += '\n';
 		if (send(poll_fd, static_cast<void *>(&tmp), tmp.size() + 1, 0) == -1)
 			perror("send: ");
 		Stock->line.clear();
 		tmp.clear();
+		return (1);
 	}
+	Stock->line.clear();
 	return (0);
 }

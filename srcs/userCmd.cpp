@@ -125,12 +125,12 @@ int USER(int poll_fd, Stock *Stock)
 	user.setServername(Stock->line[3]);
         user.setRealname(Stock->line[4]);
 	user.setIsSet(true);
-	std::cout << "Name is " << user.getUsername() << std::endl;
+/*	std::cout << "Name is " << user.getUsername() << std::endl;
 	std::cout << "Host is " << user.getHostname() << std::endl;
 	std::cout << "Server is " << user.getServername() << std::endl;
 	std::cout << "Realname is "<< user.getRealName() << std::endl;
-	std::cout << "set is " << user.getIsSet() << std::endl;
-	Stock->tmp_authentified[Stock->User] = 3;
+	std::cout << "set is " << user.getIsSet() << std::endl;*/
+	Stock->tmp_user[Stock->User] = 1;
 	Stock->line.clear();
 //	exit(0);
     return (0);

@@ -9,6 +9,7 @@ int		USER(int poll_fd, Stock *Stock);
 int		JOIN(int poll_fd, Stock *Stock);
 int		PRIVMSG(int poll_fd, Stock *Stock);
 int		MODE(int poll_fd, Stock *Stock);
+int		PING(int poll_fd, Stock *Stock);
 
 
 #endif

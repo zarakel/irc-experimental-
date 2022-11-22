@@ -3,7 +3,7 @@
 
 int	PASS(int poll_fd, Stock *Stock)
 {
-	if (Stock->tmp_authentified[Stock->User] >= 1)
+	if (Stock->authentified[Stock->User] == 1)
 	{
 		if (send(poll_fd, "Bad Usage: PASS already good !\n\r", 32, 0) == -1)
 			perror("send");
@@ -12,11 +12,11 @@ int	PASS(int poll_fd, Stock *Stock)
 	}
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{
-		if (send(poll_fd, "Good PASS !\n\r", 13, 0) == -1)
-			perror("send");
+//		if (send(poll_fd, "Good PASS !\n\r", 13, 0) == -1)
+//			perror("send");
 //              authentification réussi, pour le pass en tout cas
 		Stock->line.clear();
-		Stock->tmp_authentified[Stock->User] = 1;
+		Stock->tmp_pass[Stock->User] = 1;
 		return(3);
 	}
 	else
