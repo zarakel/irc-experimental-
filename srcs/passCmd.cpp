@@ -12,6 +12,7 @@ int	PASS(int poll_fd, Stock *Stock)
 	}
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{
+//		std::cout << "inside pass deep" << std::endl;
 //		if (send(poll_fd, "Good PASS !\n\r", 13, 0) == -1)
 //			perror("send");
 //              authentification réussi, pour le pass en tout cas

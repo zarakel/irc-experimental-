@@ -15,13 +15,15 @@ int	NICK(int poll_fd, Stock *Stock)
 			
 	}*/
 	if (Stock->line[1].length() > 0 && Stock->line[2].empty()
-	&& Stock->Nicks.size() > 0)
+	&& Stock->Identities.size() > 0)
 	{
-		for (int i = 0; i < (int)Stock->Nicks.size(); i++)
+		for (int i = 0; i < (int)Stock->Identities.size(); i++)
 		{
-			if ( i == Stock->User )
+			if ( i == Stock->User)
 				i++;
-			if (Stock->Nicks[i].compare(Stock->line[1]) == 0)
+			if ( i == (int)Stock->Identities.size())
+				break;
+			if (Stock->Identities[i][0].compare(Stock->line[1]) == 0)
 			{
 				if (send(poll_fd, "Your nick is already taken !\n\r", 30, 0) == -1)
 					perror("send");

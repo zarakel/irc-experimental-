@@ -1,0 +1,21 @@
+1er tour :
+
+nc term 1 : auth good -> user 0 (fd 5)
+nc term 2 : auth good -> user 1 (fd 6)
+nc term 3 : auth good -> user 2 (fd 7)
+
+2eme tour : close term 2 -> user 1 (fd 6)
+
+nc term 2 : auth good -> user 1 (fd 6)
+
+3 eme tour : close term 1 -> user 0 (fd 5) et close term 3 -> user 2 (fd 7)
+
+nc term 3 : auth good -> user 0 (fd 5)
+nc term 1 : auth good -> user 2 (fd 7 ) --- didnt took first PASS (coincidence for now)
+
+4 eme tour : close term 2 -> user 1 (fd 6) et close term 3 -> user 0 (fd 5)
+		et close term 1 -> user 2 (fd 7)
+
+nc term 1 : auth bad -> user 0 (fd 5)
+(nc term 3 : auth good -> user 1 (fd 6)
+nc term 2 : auth good -> user 2 (fd 7))

@@ -49,6 +49,8 @@ int	command_check(int poll_fd, Stock *Stock)
 			{
 //				std::cout << "inside pass " << std::endl;
 				PASS(poll_fd, Stock);
+//				std::cout << "pass before check" << std::endl;
+//				std::cout << "user is " << Stock->User <<  std::endl;
 				if (Stock->tmp_pass[Stock->User] == 1 && Stock->tmp_nick[Stock->User] == 1 && Stock->tmp_user[Stock->User] == 1 && Stock->authentified[Stock->User] == 0)
 			{
 				Stock->authentified[Stock->User] = 1;
@@ -63,8 +65,8 @@ int	command_check(int poll_fd, Stock *Stock)
 					if (send(poll_fd, (&tmp[b]), 1, 0) == -1)
 						perror("send: ");
 				}
-			/*	std::cout << "fd is " << Stock->client_fd[Stock->User]
-				<< std::endl;*/
+//				std::cout << "fd is " << Stock->client_fd[Stock->User]
+				//<< std::endl;
 				tmp.clear();
 			}
 				return (1);
@@ -78,6 +80,8 @@ int	command_check(int poll_fd, Stock *Stock)
 			{
 //				std::cout << "inside nick " << std::endl;
 				NICK(poll_fd, Stock);
+//				std::cout << "nick before check" << std::endl;
+//				std::cout << "user is " << Stock->User <<  std::endl;
 					if (Stock->tmp_pass[Stock->User] == 1 && Stock->tmp_nick[Stock->User] == 1 && Stock->tmp_user[Stock->User] == 1 && Stock->authentified[Stock->User] == 0)
 			{
 				Stock->authentified[Stock->User] = 1;
@@ -92,8 +96,8 @@ int	command_check(int poll_fd, Stock *Stock)
 					if (send(poll_fd, (&tmp[b]), 1, 0) == -1)
 						perror("send: ");
 				}
-				std::cout << "fd is " << Stock->client_fd[Stock->User]
-				<< std::endl;
+//				std::cout << "fd is " << Stock->client_fd[Stock->User]
+		//		<< std::endl;
 				tmp.clear();
 			}
 				return (1);
@@ -105,6 +109,8 @@ int	command_check(int poll_fd, Stock *Stock)
 			{
 //				std::cout << "inside user" << std::endl;
 				USER(poll_fd, Stock);
+//				std::cout << "user before check" << std::endl;
+//				std::cout << "user is " << Stock->User <<  std::endl;
 				if (Stock->tmp_pass[Stock->User] == 1 && Stock->tmp_nick[Stock->User] == 1 && Stock->tmp_user[Stock->User] == 1 && Stock->authentified[Stock->User] == 0)
 			{
 				Stock->authentified[Stock->User] = 1;
@@ -120,8 +126,8 @@ int	command_check(int poll_fd, Stock *Stock)
 						perror("send: ");
 				}
 				tmp.clear();
-				std::cout << "fd is " << Stock->client_fd[Stock->User]
-				<< std::endl;
+//				std::cout << "fd is " << Stock->client_fd[Stock->User]
+		//		<< std::endl;
 			}
 				return (1);
 			}
@@ -206,6 +212,7 @@ int	command_check(int poll_fd, Stock *Stock)
 }
 
 int	receive_message(int poll_fd, Stock *Stock)
+//int	receive_message(int poll_fd, char *buf, Stock *Stock)
 {
 //	std::cout << "start receive message" << std::endl;
 	char		buf[9999];
@@ -213,7 +220,7 @@ int	receive_message(int poll_fd, Stock *Stock)
 	if (recv(poll_fd, buf, 9999, 0) == -1)
 	{
 	//	perror("recv :");
-		return (10);
+		return (1);
 	}
 	for (int it = 0; ((buf[it] != '\n' | buf[it] != '\r') && it <= 512) ; it++)
 	{
@@ -224,7 +231,7 @@ int	receive_message(int poll_fd, Stock *Stock)
 				perror("send");
 			Stock->word.clear();
 			Stock->line.clear();
-			return (12);
+			return (1);
 		}	
 		Stock->word.push_back(buf[it]);
 		if (buf[it + 1] == ' ')
@@ -266,7 +273,7 @@ int	receive_message(int poll_fd, Stock *Stock)
 				perror("send");
 			Stock->word.clear();
 			Stock->line.clear();
-			return (19);
+			return (1);
 		}	
 	}
 //	command_check(poll_fd, Stock);
@@ -274,8 +281,10 @@ int	receive_message(int poll_fd, Stock *Stock)
 	for (size_t c = 0; c <= Stock->all_commands.size(); c++) 
 	{
 		if (Stock->line[0] == Stock->all_commands[c])
-//	std::cout << Stock->line[c] << std::endl;
+		{
+	//		std::cout << Stock->line[0] << std::endl;
 			return (0);
+		}
 	}
 	Stock->line.clear();
 //	if (send(poll_fd, "Bad command: Try better\n\r", 25, 0) == -1)

@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/22 19:51:09 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/24 17:03:50 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void *get_in_addr(struct sockaddr *sa)
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-int Check_FD(Stock *Stock, struct pollfd *popoll)
+int Check_FD(Stock *Stock)
 {
 // a arranger !
 /*	std::cout << "yo" << std::endl;
@@ -55,21 +55,39 @@ int Check_FD(Stock *Stock, struct pollfd *popoll)
 				break;
 			}
 			else if (Stock->client_fd[i + 1] == 0)
-			{*/
-				for (int a = 0; a < Stock->User_Count && (((popoll + a)->events & POLLIN) != POLLIN); a++)
+		{*/
+	for (int i = 0; i < Stock->User_Count; i++)
+	{
+//		if (((popoll + i)->revents & POLLIN) == POLLIN)
+//		{
+	//		Stock->User = i;
+	//			std::cout << "User is " << i << std::endl;
+			if (recv(Stock->client_fd[i], NULL,1, MSG_PEEK | MSG_DONTWAIT) == 0)
+			{	
+				for (int a = 0; Stock->Channel_Count > 0 && a < Stock->Channel_Count; a++)
+					Stock->Channels_Users[Stock->Channels[a][0]][i].clear();
+				if (Stock->Identities.size() > 0)
 				{
-					if (((popoll + a)->events & POLLIN) == POLLIN)
-					{
-						Stock->User = a;
-						std::cout << "t qui toi la (fd in check) = " <<
-						(popoll + a)->fd << std::endl;
-						return (0);
-					}
+					Stock->Identities[i].clear();
+					Stock->Identities[i].resize(0);
 				}
-				return (1);
+//				if (Stock->Nicks.size() > 0)
+//					Stock->Nicks[i] = "\0";
+				Stock->tmp_pass[i] = 0;
+				Stock->tmp_nick[i] = 0;
+				Stock->tmp_user[i] = 0;
+				Stock->authentified[i] = 0;
+//				std::cout << "héhé boy " << i << std::endl;
+				close(Stock->client_fd[i]);
+		//		Stock->client_fd[i] = 0;
+			//		free(popoll + i);
+				//	Stock->User_Count--;
+			}
+		}
 	//		}
-/*		}
-	}*/
+//		}
+//	}
+	return (1);
 }
 				
 
@@ -162,6 +180,7 @@ int server(Stock *Stock)
 		//	perror("poll :"); 
 		for (int i = 0; i < (nfds + 1); i++)
 		{
+	//		std::cout << "i en cours " << i << std::endl;
 			sin_size = sizeof their_addr;
 			int new_fd;
 		/*	if ((new_fd = accept((popoll + i)->fd,
@@ -169,6 +188,7 @@ int server(Stock *Stock)
 			&sin_size)) == -1 )
 				perror("accept :"); 
 				continue;*/
+//			Check_FD(Stock);
 			new_fd = accept((popoll + i)->fd,
 			(struct sockaddr *)&their_addr,
 			&sin_size);
@@ -177,22 +197,37 @@ int server(Stock *Stock)
 		//	printf("server: got connection from %s\n", s);
 			if (new_fd != -1)
 			{
+				Check_FD(Stock);
 				for (int a = 0; a < Stock->User_Count; a++)
 				{
 					if (new_fd == (popoll + a)->fd)
 					{
-					//	std::cout << "fd is " << new_fd << std::endl;
+			//			std::cout << "discover fd is " << new_fd << std::endl;
+			//			std::cout << "a is " << a << std::endl;
+				(popoll + a)->fd = new_fd;
+				(popoll + a)->events = POLLIN;
+				(popoll + a)->revents = 0;
+/*				for (int b = 0; Stock->client_fd[b] != new_fd; b++)*/
+					Stock->client_fd[a - 1] = new_fd;
+				Stock->User = a - 1;
 						break;
 					}
 					if (a + 1 == Stock->User_Count)
 					{
+			//			std::cout << "attribute" << std::endl;
 			//	std::cout << "before = " << Stock->User_Count - 2 << std::endl;
 				Stock->User_Count++;
 				//std::cout << "after = " << Stock->User_Count - 2 << std::endl;
-				(popoll + Stock->User_Count - 1)->fd = new_fd;
+			/*	(popoll + Stock->User_Count - 1)->fd = new_fd;
 				(popoll + Stock->User_Count - 1)->events = POLLIN;
-				(popoll + Stock->User_Count - 1)->revents = 0;
-				Stock->client_fd[Stock->User_Count - 2] = new_fd;
+				(popoll + Stock->User_Count - 1)->revents = 0;*/
+				(popoll + a + 1)->fd = new_fd;
+				(popoll + a + 1)->events = POLLIN;
+				(popoll + a + 1)->revents = 0;
+				Stock->client_fd[a] = new_fd;
+				Stock->User = a;
+			Check_FD(Stock);
+					break;
 					}
 				}
 				
@@ -201,46 +236,47 @@ int server(Stock *Stock)
 			//	std::cout << "new fd is " << new_fd << std::endl;
 
 			}
-			else
+		/*	else
 			{
 				for (int a = 0; a < Stock->User_Count; a++)
 				{
-					if ((popoll + a)->revents & POLLIN)// == POLLIN)
+					if (a != 0 && ((popoll + a)->revents & POLLIN) == POLLIN)
 					{
 						Stock->User = a - 1;
+			Check_FD(Stock);
+			//			std::cout << "pollfd is " << (popoll + a)->fd << std::endl;
+						std::cout << "User check = " << Stock->User << std::endl;
 						break;
 					}
 				}
-			}
-			
-			if (Stock->User_Count > 1)
+		//	}*/
+			Check_FD(Stock);
+	/*		for (int a = 0; a < Stock->User_Count; a++)
 			{
-				if(recv(Stock->client_fd[Stock->User], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
+				if ((popoll + a)->revents & POLLIN)// == POLLIN)
 				{
-					if (receive_message(Stock->client_fd[Stock->User], Stock) == 0)
-					{
-						std::cout << Stock->client_fd[Stock->User] << std::endl;
-						command_check(Stock->client_fd[Stock->User], Stock);
-					}
+					Stock->User = a - 1;
+			//			std::cout << "pollfd is " << (popoll + a)->fd << std::endl;
+			//		std::cout << "User check = " << a << std::endl;
+					break;
 				}
-				else
+			}*/
+			if (recv(Stock->client_fd[i], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
+			{
+				if (receive_message(Stock->client_fd[i], Stock) == 0)
 				{
-				/*	std::cout << Stock->User << std::endl;
-					for (int a = 0; a < Stock->Channel_Count; a++)
-						Stock->Channels_Users[Stock->Channels[a][0]][Stock->User].clear();
-					Stock->Identities[Stock->User].clear();
-					Stock->Nicks[Stock->User] = "\0";
-					Stock->tmp_pass[Stock->User] = 0;
-					Stock->tmp_nick[Stock->User] = 0;
-					Stock->tmp_user[Stock->User] = 0;
-					Stock->authentified[Stock->User] = 0;
-					std::cout << "héhé boy" << std::endl;*/
-					close(Stock->client_fd[Stock->User]);
+			//			std::cout << "fd after receive " << Stock->client_fd[i] << std::endl;
+					command_check(Stock->client_fd[i], Stock);
 				}
-//				break;
 			}
-//			break;
+			Check_FD(Stock);
+				
+				//	break;
 		}
+//				break;
+//	}
+//			break;
+	//	}
 	}
 	return 0;
 }

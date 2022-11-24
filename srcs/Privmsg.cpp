@@ -57,7 +57,7 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 			tmp = Stock->Identities[Stock->User][0];
 			tmp += ": ";
 			tmp += Stock->line[2];
-			tmp += "\n\r\0";
+			tmp += '\n';
 			size_t size = tmp.size();
 //			std::cout << tmp << " && size = " << size << std::endl;
 /*			if (send(Stock->client_fd[user_check], static_cast<void *>(&tmp), size - 1, 0) == -1)
@@ -93,7 +93,7 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 				std::string tmp = Stock->Identities[me_check][0];
 				tmp += " : ";
 				tmp += Stock->line[2];
-				tmp += "\n\r\0";
+				tmp += '\n';
 				size_t size = tmp.size();
 //				std::cout << "bouh" << std::endl;
 				for (size_t c = 0; c < size; c++)

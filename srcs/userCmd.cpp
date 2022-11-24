@@ -113,11 +113,13 @@ int USER(int poll_fd, Stock *Stock)
     if (Stock->line.size() < Stock->full_command["USER"].size())
     {
         errorMessage(poll_fd, ERR_NEEDMOREPARAMS, ": Need more parameters ");
+	Stock->line.clear();
         return (1);
     }
     if (user.getIsSet())
     {
         errorMessage(poll_fd, ERR_ALREADYREGISTRED, user.getNick());
+	Stock->line.clear();
         return (1);
     }
 	user.setUsername(Stock->line[1]);
@@ -131,6 +133,7 @@ int USER(int poll_fd, Stock *Stock)
 	std::cout << "Realname is "<< user.getRealName() << std::endl;
 	std::cout << "set is " << user.getIsSet() << std::endl;*/
 	Stock->tmp_user[Stock->User] = 1;
+//	std::cout << "user deep" << std::endl;
 	Stock->line.clear();
 //	exit(0);
     return (0);
