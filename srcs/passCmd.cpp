@@ -1,32 +1,22 @@
 #include "../headers/headers.hpp"
 #include "../headers/Command.hpp"
+#include "../headers/answer.hpp"
 
 int	PASS(int poll_fd, Stock *Stock)
 {
-	if (Stock->authentified[Stock->User] == 1)
+	if (Stock->authentified[Stock->User] == 1 | Stock->tmp_pass[Stock->User] == 1)
 	{
-		if (send(poll_fd, "Bad Usage: PASS already good !\n\r", 32, 0) == -1)
-			perror("send");
+		MessageG(poll_fd, ERR_ALREADYREGISTERED, ":You aren't registered", Stock);
 		Stock->line.clear();
-		return (2000);
+		return (1);
 	}
 	if (Stock->pass.compare(Stock->line[1]) == 0)
 	{
-//		std::cout << "inside pass deep" << std::endl;
-//		if (send(poll_fd, "Good PASS !\n\r", 13, 0) == -1)
-//			perror("send");
-//              authentification réussi, pour le pass en tout cas
 		Stock->line.clear();
 		Stock->tmp_pass[Stock->User] = 1;
-		return(3);
+		return(0);
 	}
-	else
-	{
-//		voir comment doivent etre géré les numerics
-		std::cout << "le mot de passe invalide est : " << Stock->line[1] << std::endl;
-		if (send(poll_fd, "Bad Password: Casse toi pov' con !\n\r", 36, 0) == -1)
-			perror("send");
-		Stock->line.clear();
-		return (400);
-	}	
+	MessageG(poll_fd, ERR_PASSWDMISMATCH, ":Bad password", Stock);
+	Stock->line.clear();
+	return (1);
 }

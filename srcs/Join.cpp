@@ -1,5 +1,6 @@
 #include "../headers/headers.hpp"
 #include "../headers/Join.hpp"
+#include "../headers/answer.hpp"
 
 int	JOIN(int poll_fd, Stock * Stock)
 {
@@ -14,21 +15,17 @@ int	JOIN(int poll_fd, Stock * Stock)
 	if (Stock->line[1][0] != '#' && Stock->line[1][0] != '&' &&
 		Stock->line[1][0] != '+' && Stock->line[1][0] != '!')
 	{
-		if (send(poll_fd, "Bad Param: +, !, # or & are not there\r\n",
-		39, 0) == -1)
-			perror("send");
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
 		Stock->line.clear();
-		return (83);
+		return (0);
 	}
 
 // vérif si la ligne est plus grande que 50 caracteres
 	if (Stock->line.size() > 50)
 	{
-		if (send(poll_fd, "Bad Param: chan name too long\r\n", 31, 0)
-			== -1)
-			perror("send");
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
 		Stock->line.clear();
-		return (862);
+		return (0);
 	}
 
 // vérif si plusieurs channels sont donnés et stockage
@@ -36,10 +33,11 @@ int	JOIN(int poll_fd, Stock * Stock)
 	{
 		if (Stock->line[1][i] == ' ' | Stock->line[1][i] == 7)
 		{
-			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
-				perror("send");
+		//	if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
+		//		perror("send");
+			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
 			Stock->line.clear();
-			return (882);
+			return (0);
 		}
 		tmp.push_back(Stock->line[1][i]);
 		if ( Stock->line[1][i + 1] == '\0'
@@ -59,10 +57,11 @@ int	JOIN(int poll_fd, Stock * Stock)
 	(Stock->line[1][i + 2] != '#' || Stock->line[1][i + 2] != '&'
 	|| Stock->line[1][i + 2] != '+' || Stock->line[1][i + 2] != '!'))
 		{
-			if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
-				perror("send");
+		//	if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
+		//		perror("send");
+			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
 			Stock->line.clear();
-			return (882);
+			return (0);
 		}
 	}
 	tmp_Channel.push_back("\0");
@@ -76,10 +75,11 @@ int	JOIN(int poll_fd, Stock * Stock)
 	{
 		if (Stock->line[2][i] == ' ' || Stock->line[2][i] == 7)
 		{
-			if (send(poll_fd, "Bad Param: key contain wrong characters\r\n", 41, 0) == -1)
-				perror("send");
+		/*	if (send(poll_fd, "Bad Param: key contain wrong characters\r\n", 41, 0) == -1)
+				perror("send");*/
+			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
 			Stock->line.clear();
-			return (883);
+			return (0);
 		}
 		tmp.push_back(Stock->line[2][i]);
 		it++;
@@ -87,7 +87,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 		| Stock->line[2][i + 1] == ',' )
 		{
 			tmp_Key[o].replace(0, it, tmp);
-			std::cout << "key = "<< tmp_Key[o] << std::endl;
+	//		std::cout << "key = "<< tmp_Key[o] << std::endl;
 			tmp.clear();
 		}
 //		tmp_Key[it] = Stock->line[2][i];
@@ -132,10 +132,12 @@ int	JOIN(int poll_fd, Stock * Stock)
 			[Stock->Channels[i][0]][Stock->User] != 
 			Stock->Identities[Stock->User][0])
 			{
-				if (send(poll_fd,
+		/*		if (send(poll_fd,
 				"JOIN (existing channel) complete\n\r", 34, 0)
 				== -1)
-					perror("send");
+					perror("send");*/
+				MessageG(poll_fd, RPL_TOPIC, " :" +
+				Stock->Channels[i][2] , Stock);
 				Stock->Channels_Users
 				[Stock->Channels[i][0]].push_back
 				(Stock->Identities[Stock->User][0]);
@@ -178,16 +180,20 @@ int	JOIN(int poll_fd, Stock * Stock)
 // 			Channels[i][1] == key
 // 			Channels[i][2] == topic 
 			{
-			//	if (send(poll_fd, static_cast<void *>(&Stock->Channels[i][2]), Stock->Channels[i][2].length() - 1, 0) == -1)
+			/*	if (send(poll_fd, static_cast<void *>(&Stock->Channels[i][2]), Stock->Channels[i][2].length() - 1, 0) == -1)
 				if (send(poll_fd, "Topic opif\n\r", 12, 0)
 				== -1)
-					perror("send");
+					perror("send");*/
+				MessageG(poll_fd, RPL_TOPIC, " :" +
+				Stock->Channels[i][2] , Stock);
 			}
 			else
 			{
-				if (send(poll_fd, "RPL No Topic\r\n", 14,
+		/*		if (send(poll_fd, "RPL No Topic\r\n", 14,
 				0) == -1)
-					perror("send");
+					perror("send");*/
+				MessageG(poll_fd, RPL_TOPIC, " :" +
+				Stock->Channels[i][2] , Stock);
 			}
 			o++;
 			if (o == (int)tmp_Channel.size())
@@ -195,7 +201,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 				tmp_Channel.clear();
 				tmp_Key.clear();
 				Stock->line.clear();
-				return (1239);
+				return (1);
 			}
 	//		tmp_Channel_Check[o] = 1;
 		}
@@ -203,13 +209,14 @@ int	JOIN(int poll_fd, Stock * Stock)
 		tmp_Channel[o] == Stock->Channels[i][0] &&
 		tmp_Key[o] != Stock->Channels[i][1])
 		{
-			if (send(poll_fd, "Bad param: Key is wrong\r\n",
+		/*	if (send(poll_fd, "Bad param: Key is wrong\r\n",
 			25, 0) == -1)
-				perror("send");
+				perror("send");*/
+			MessageG(poll_fd, ERR_BADCHANNELKEY, ": Wrong key", Stock);
 			tmp_Channel.clear();
 			tmp_Key.clear();
 			Stock->line.clear();
-			return (5874);	
+			return (0);	
 		}
 		else if ( i == Stock->Channel_Count &&
 		o < (int)tmp_Channel.size() )
@@ -236,10 +243,12 @@ int	JOIN(int poll_fd, Stock * Stock)
 					tmp.length(), 0) == -1)
 						perror("send");
 					tmp.clear();*/
-					if (send(poll_fd, "(new)JOIN complete\n\r", 20, 0) == -1)
+				/*	if (send(poll_fd, "(new)JOIN complete\n\r", 20, 0) == -1)
 						perror("send");
 					if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
-						perror("send");
+						perror("send");*/
+					MessageG(poll_fd, RPL_TOPIC, " :" +
+					Stock->Channels[i][2] , Stock);
 		//     mis a jour des données utilisateurs
 					Stock->Channels_Users
 					[Stock->Channels[i][0]].push_back
@@ -255,7 +264,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 						tmp_Channel.clear();
 						tmp_Key.clear();
 						Stock->line.clear();
-						return (123456);
+						return (1);
 				}
 			}
 	/*		int turn = 0; --------  Commenté parce que je ne sais pas ou je vais avec ca, dans le cas ou on doit utiliser tout les id d'un user
@@ -306,13 +315,14 @@ int	JOIN(int poll_fd, Stock * Stock)
 //			std::cout << "Tour " << tour++ << std::endl;
 			if (tmp_Key[i].compare("\0") != 0)
 			{
-				if (send(poll_fd, "Bad param: Key is wrong\r\n",
+			/*	if (send(poll_fd, "Bad param: Key is wrong\r\n",
 				25, 0) == -1)
-					perror("send");
+					perror("send");*/
+				MessageG(poll_fd, ERR_BADCHANNELKEY, ": Wrong key", Stock);
 				tmp_Channel.clear();
 				tmp_Key.clear();
 				Stock->line.clear();
-				return(5874);	
+				return(0);	
 			}
 			Stock->Channels[i].push_back(tmp_Channel[i]);
 			Stock->Channels[i].push_back(tmp_Key[i]);
@@ -324,12 +334,15 @@ int	JOIN(int poll_fd, Stock * Stock)
 /*			if (send(poll_fd, static_cast<void *>(&tmp),
 			tmp.length() + 1, 0) == -1)
 				perror("send");*/
-			if (send(poll_fd, "JOIN complete\r\n", 15, 0) == -1)
+		/*	if (send(poll_fd, "JOIN complete\r\n", 15, 0) == -1)
 				perror("send");
 //			tmp.clear();
 			if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
-				perror("send");
+				perror("send");*/
+			
 			//std::cout << "yo = " << yo++ << std::endl;
+			MessageG(poll_fd, RPL_TOPIC, " :" +
+			Stock->Channels[i][2] , Stock);
 			Stock->Channels_Users
 			[Stock->Channels[i][0]].push_back
 			(Stock->Identities[Stock->User][0]);

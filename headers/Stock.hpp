@@ -32,7 +32,10 @@ class Stock
 
 	std::map<int, std::vector<std::string> > Identities; // int correspond a l'ordre de connexion des clients
 //	[0] représente le Nick, les suivant peuvent représenter les informations de USER
-//	peut-être qu'on peut set le dernier pour le flag de mode ? 
+//	pet-être qu'on peut set le dernier pour le flag de mode ? 
+
+	std::map<int, std::vector<std::string> > Users;
+//      [0] -> Username; [1] -> Realname; [2] -> Hostname; [3] -> Servername;
 
 	std::map<std::string, std::vector<std::string> > full_command; // string représente le nom d'une commande
 //	les autres arguements correspondent aux paramètres obligatoires

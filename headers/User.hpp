@@ -1,9 +1,10 @@
 #ifndef USER_HPP
 # define USER_HPP
 
-# include "headers.hpp"
 # include "Stock.hpp"
-# include "error.hpp"
+/*# include "headers.hpp"
+# include "Stock.hpp"
+# include "answer.hpp"
 # include "tools.hpp"
 
 
@@ -54,6 +55,8 @@ class User
 	void			setNick( std::string nick);
 	void			setIsSet( bool isset );
 
-};
+};*/
+
+int User(int poll_fd, Stock *Stock);
 
 #endif

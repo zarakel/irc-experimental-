@@ -1,5 +1,6 @@
 #include "../headers/headers.hpp"
 #include "../headers/Privmsg.hpp"
+#include "../headers/answer.hpp"
 
 int PRIVMSG(int poll_fd, Stock *Stock)
 {
@@ -26,8 +27,9 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 
 		else if (search + 1 == size && (user_check == -1 && channel_check == -1))
 		{
-			if (send(poll_fd, "Bad params: The user isn't found\r\n", 34, 0) == -1)
-				perror("send :");
+		/*	if (send(poll_fd, "Bad params: The user isn't found\r\n", 34, 0) == -1)
+				perror("send :");*/
+			MessageG(poll_fd, ERR_NOSUCHNICK, ": No target found", Stock);
 			Stock->line.clear();
 			return (411);
 		}

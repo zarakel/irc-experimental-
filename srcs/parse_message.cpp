@@ -1,6 +1,18 @@
 #include "../headers/headers.hpp"
 #include "../headers/Command.hpp"
 #include "../headers/parse_message.hpp"
+#include "../headers/answer.hpp"
+
+int auth_check(int poll_fd, Stock * Stock)
+{
+	if (Stock->authentified[Stock->User] == 0)
+	{
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":You aren't authentified", Stock);
+		Stock->line.clear();
+		return (0);
+	}
+	return (1);
+}	
 
 int	command_check(int poll_fd, Stock *Stock)
 {
@@ -43,7 +55,6 @@ int	command_check(int poll_fd, Stock *Stock)
 				PING(poll_fd, Stock);
 				return (0);
 			}
-
 			if (Stock->line[0] == Stock->all_commands[0]
 			&& Stock->line.size() == Stock->full_command["PASS"].size())
 			{
@@ -51,13 +62,15 @@ int	command_check(int poll_fd, Stock *Stock)
 				PASS(poll_fd, Stock);
 //				std::cout << "pass before check" << std::endl;
 //				std::cout << "user is " << Stock->User <<  std::endl;
-				if (Stock->tmp_pass[Stock->User] == 1 && Stock->tmp_nick[Stock->User] == 1 && Stock->tmp_user[Stock->User] == 1 && Stock->authentified[Stock->User] == 0)
-			{
-				Stock->authentified[Stock->User] = 1;
+				if (Stock->tmp_nick[Stock->User] == 1 &&
+				Stock->tmp_user[Stock->User] == 1 &&
+				Stock->authentified[Stock->User] == 0)
+				{
+					Stock->authentified[Stock->User] = 1;
 // on doit ajouter un null a la fin de Identities pour le rendre viable
-				Stock->Identities[Stock->User].push_back("\0");
-				Stock->Flag.push_back("\0");
-				std::string tmp = ":ft_irc 001 ";
+					Stock->Identities[Stock->User].push_back("\0");
+					Stock->Flag.push_back("\0");
+			/*	std::string tmp = ":ft_irc 001 ";
 				tmp += Stock->Identities[Stock->User][0];
 				tmp += " :Welcome to the IRC !\n";
 				for (size_t b = 0; b < tmp.size(); b++)
@@ -67,14 +80,22 @@ int	command_check(int poll_fd, Stock *Stock)
 				}
 //				std::cout << "fd is " << Stock->client_fd[Stock->User]
 				//<< std::endl;
-				tmp.clear();
-			}
+				tmp.clear();*/
+					std::string tmp = " :" +
+					Stock->Identities[Stock->User][0];
+        				tmp += "!" + Stock->Users[Stock->User][0] +
+					"@127.0.0.1";
+					MessageG(poll_fd, RPL_WELCOME,
+					"Welcome to the IRC" + tmp, Stock);
+					tmp.clear();
+				}
 				return (1);
 			}
 	//		Stock->tmp_authentified[Stock->User] = 1;
 //			std::cout << "lo " << yo++ << std::endl;
 			if (Stock->line[0] == Stock->all_commands[1]
-			&& Stock->line.size() == Stock->full_command["NICK"].size())
+			&& Stock->line.size() == Stock->full_command["NICK"].size()
+			&& Stock->tmp_pass[Stock->User] == 1)
 	//		&& (Stock->tmp_authentified[Stock->User] == 1
 	//		| Stock->authentified[Stock->User] == 1))
 			{
@@ -82,13 +103,15 @@ int	command_check(int poll_fd, Stock *Stock)
 				NICK(poll_fd, Stock);
 //				std::cout << "nick before check" << std::endl;
 //				std::cout << "user is " << Stock->User <<  std::endl;
-					if (Stock->tmp_pass[Stock->User] == 1 && Stock->tmp_nick[Stock->User] == 1 && Stock->tmp_user[Stock->User] == 1 && Stock->authentified[Stock->User] == 0)
-			{
-				Stock->authentified[Stock->User] = 1;
+				if (Stock->tmp_nick[Stock->User] == 1
+				&& Stock->tmp_user[Stock->User] == 1
+				&& Stock->authentified[Stock->User] == 0)
+				{
+					Stock->authentified[Stock->User] = 1;
 // on doit ajouter un null a la fin de Identities pour le rendre viable
-				Stock->Identities[Stock->User].push_back("\0");
-				Stock->Flag.push_back("\0");
-				std::string tmp = ":ft_irc 001 ";
+					Stock->Identities[Stock->User].push_back("\0");
+					Stock->Flag.push_back("\0");
+			/*	std::string tmp = ":ft_irc 001 ";
 				tmp += Stock->Identities[Stock->User][0];
 				tmp += " :Welcome to the IRC !\n";
 				for (size_t b = 0; b < tmp.size(); b++)
@@ -98,12 +121,20 @@ int	command_check(int poll_fd, Stock *Stock)
 				}
 //				std::cout << "fd is " << Stock->client_fd[Stock->User]
 		//		<< std::endl;
-				tmp.clear();
-			}
+				tmp.clear();*/
+					std::string tmp = " :" +
+					Stock->Identities[Stock->User][0];
+        				tmp += "!" + Stock->Users[Stock->User][0] +
+					"@127.0.0.1";
+					MessageG(poll_fd, RPL_WELCOME,
+					"Welcome to the IRC" + tmp, Stock);
+					tmp.clear();
+				}
 				return (1);
 			}
 			if (Stock->line[0] == Stock->all_commands[2]
-			&& Stock->line.size() == Stock->full_command["USER"].size())
+			&& Stock->line.size() == Stock->full_command["USER"].size()
+			&& Stock->tmp_pass[Stock->User] == 1)
 //			&& (Stock->tmp_authentified[Stock->User] == 2
 //			| Stock->authentified[Stock->User] == 1))
 			{
@@ -111,13 +142,15 @@ int	command_check(int poll_fd, Stock *Stock)
 				USER(poll_fd, Stock);
 //				std::cout << "user before check" << std::endl;
 //				std::cout << "user is " << Stock->User <<  std::endl;
-				if (Stock->tmp_pass[Stock->User] == 1 && Stock->tmp_nick[Stock->User] == 1 && Stock->tmp_user[Stock->User] == 1 && Stock->authentified[Stock->User] == 0)
-			{
-				Stock->authentified[Stock->User] = 1;
+				if (Stock->tmp_nick[Stock->User] == 1
+				&& Stock->tmp_user[Stock->User] == 1
+				&& Stock->authentified[Stock->User] == 0)
+				{
+					Stock->authentified[Stock->User] = 1;
 // on doit ajouter un null a la fin de Identities pour le rendre viable
-				Stock->Identities[Stock->User].push_back("\0");
-				Stock->Flag.push_back("\0");
-				std::string tmp = ":ft_irc 001 ";
+					Stock->Identities[Stock->User].push_back("\0");
+					Stock->Flag.push_back("\0");
+			/*	std::string tmp = ":ft_irc 001 ";
 				tmp += Stock->Identities[Stock->User][0];
 				tmp += " :Welcome to the IRC !\n";
 				for (size_t b = 0; b < tmp.size(); b++)
@@ -125,10 +158,17 @@ int	command_check(int poll_fd, Stock *Stock)
 					if (send(poll_fd, (&tmp[b]), 1, 0) == -1)
 						perror("send: ");
 				}
-				tmp.clear();
+				tmp.clear();*/
 //				std::cout << "fd is " << Stock->client_fd[Stock->User]
 		//		<< std::endl;
-			}
+					std::string tmp = " :" +
+					Stock->Identities[Stock->User][0];
+        				tmp += "!" + Stock->Users[Stock->User][0] +
+					"@127.0.0.1";
+					MessageG(poll_fd, RPL_WELCOME,
+					"Welcome to the IRC" + tmp, Stock);
+					tmp.clear();
+				}
 				return (1);
 			}
 // une fois pass, nick et user de fait, authentified = 1
@@ -140,10 +180,10 @@ int	command_check(int poll_fd, Stock *Stock)
 //			std::cout << "la " << yo++ << std::endl;
 			else if ((Stock->line[0] == Stock->all_commands[3]
 			&& Stock->line.size() == Stock->full_command["JOIN"].size() - 1
-			&& Stock->authentified[Stock->User] == 1) ||
+			&& auth_check(poll_fd, Stock)) ||
 			(Stock->line[0] == Stock->all_commands[3]
 			&& Stock->line.size() == Stock->full_command["JOIN"].size()
-			&& Stock->authentified[Stock->User] == 1))
+			&& auth_check(poll_fd, Stock)))
 			{
 //				std::cout << "inside join " << yo++ << std::endl;
 				JOIN(poll_fd, Stock);
@@ -151,9 +191,9 @@ int	command_check(int poll_fd, Stock *Stock)
 			}
 
 //			std::cout << "le " << yo++ << std::endl;
-			else if ((Stock->line[0] == Stock->all_commands[4]
+			else if (Stock->line[0] == Stock->all_commands[4]
 			&& Stock->line.size() == Stock->full_command["PRIVMSG"].size()
-			&& Stock->authentified[Stock->User] == 1))
+			&& auth_check(poll_fd, Stock))
 			{
 //				std::cout << "inside privmsg " << yo++ << std::endl;
 				PRIVMSG(poll_fd, Stock);
@@ -161,25 +201,16 @@ int	command_check(int poll_fd, Stock *Stock)
 			}
 
 //			std::cout << "ly " << yo++ << std::endl;
-			else if ((Stock->line[0] == Stock->all_commands[5]
+			else if (Stock->line[0] == Stock->all_commands[5]
 			&& Stock->line.size() == Stock->full_command["MODE"].size()
-			&& Stock->authentified[Stock->User] == 1))
+			&& auth_check(poll_fd, Stock))
 			{
 		//		std::cout << "inside mode" << std::endl;
 				MODE(poll_fd, Stock);
 				return (1);
 			}
 //			std::cout << "lp " << yo++ << std::endl;
-/*			if (Stock->authentified[Stock->User] == 0)
-			{
-//				std::cout << "inside 0 auth " << yo++ << std::endl;
-				if (send(poll_fd, "Bad Usage: You're not authorized !\n\r", 37, 0) == -1)
-					perror("send");
-				for (size_t a = 0; a <= Stock->line.size(); a++)
-					std::cout << Stock->line[a] << std::endl;
-				Stock->line.clear();
-				return (565);
-			}
+			
 //			std::cout << "coucou bl" << std::endl;*/
 /*			if (i == Stock->all_commands.size())
 			{
@@ -206,9 +237,9 @@ int	command_check(int poll_fd, Stock *Stock)
 	{
 		std::cout << "la" << std::endl;
 		perror("send");
-//		std::cout << "fin" << yo++ << std::endl;
-		Stock->line.clear();*/
-		return (0);
+//		std::cout << "fin" << yo++ << std::endl;*/
+	Stock->line.clear();
+	return (0);
 }
 
 int	receive_message(int poll_fd, Stock *Stock)
@@ -241,8 +272,10 @@ int	receive_message(int poll_fd, Stock *Stock)
 	//		word.push_back('\0'); Inutile de conclure par NULL
 			Stock->line.push_back(Stock->word);
 			Stock->word.clear();
-			if (buf[it + 2] == '\n' | buf[it + 2] == '\r')
+			if (buf[it + 1] == '\n' | buf[it + 1] == '\r')
+			{
 				break;
+			}
 		}
 		if (buf[it + 1] == ':' && buf[it + 2] != '\0')
 		{
@@ -282,13 +315,15 @@ int	receive_message(int poll_fd, Stock *Stock)
 	{
 		if (Stock->line[0] == Stock->all_commands[c])
 		{
-	//		std::cout << Stock->line[0] << std::endl;
+//			for (size_t z = 0; z < Stock->line.size(); z++)
+//				std::cout << Stock->line[z] << std::endl;
 			return (0);
 		}
 	}
 	Stock->line.clear();
 //	if (send(poll_fd, "Bad command: Try better\n\r", 25, 0) == -1)
 //		perror("send: ");
+	MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad Usage", Stock);
 	return(1);
 }
 

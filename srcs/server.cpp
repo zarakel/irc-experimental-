@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/24 17:03:50 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/25 14:16:14 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,11 @@ int Check_FD(Stock *Stock)
 				{
 					Stock->Identities[i].clear();
 					Stock->Identities[i].resize(0);
+				}
+				if (Stock->Users.size() > 0)
+				{
+					Stock->Users[i].clear();
+					Stock->Users[i].resize(0);
 				}
 //				if (Stock->Nicks.size() > 0)
 //					Stock->Nicks[i] = "\0";
@@ -188,7 +193,7 @@ int server(Stock *Stock)
 			&sin_size)) == -1 )
 				perror("accept :"); 
 				continue;*/
-//			Check_FD(Stock);
+			Check_FD(Stock);
 			new_fd = accept((popoll + i)->fd,
 			(struct sockaddr *)&their_addr,
 			&sin_size);

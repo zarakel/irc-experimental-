@@ -1,6 +1,6 @@
 #include "../headers/Mode.hpp"
 #include "../headers/headers.hpp"
-#include "../headers/error.hpp"
+#include "../headers/answer.hpp"
 
 int MODE(int poll_fd, Stock *Stock)
 {
@@ -25,17 +25,24 @@ int MODE(int poll_fd, Stock *Stock)
 		}
 		if (search + 1 == size && user_check && (user_check == -1 && chan_check == -1))
 		{
-			errorMessageG(poll_fd, ERR_USERSDONTMATCH, ": User's nick don't match ");
+			MessageG(poll_fd, ERR_NOSUCHNICK, ": Nick isn't known", Stock);
 			Stock->line.clear();
 			return (1);
 		}
+	}
+	if (Stock->Identities[user_check][0].compare(Stock->Identities[Stock->User][0]) != 0)
+	{
+		
+		MessageG(poll_fd, ERR_USERSDONTMATCH, ": Nick doesn't match", Stock);
+		Stock->line.clear();
+		return (1);
 	}
 	if ((Stock->line[2][0] != '+' && Stock->line[2][0] != '-')
 	&& (Stock->line[2][1] != 'a' && Stock->line[2][1] != 'i' &&
 	Stock->line[2][1] != 'w' && Stock->line[2][1] != 'r' && Stock->line[2][1] != 'o'
 	&& Stock->line[2][1] != 'O' && Stock->line[2][1] != 's'))
 	{
-		errorMessageG(poll_fd, ERR_UMODEUNKNOWNFLAG, ": Params aren't known");
+		MessageG(poll_fd, ERR_UMODEUNKNOWNFLAG, ": Params aren't known", Stock);
 		return (1);
 	}
 /*	for (int fill = 0; fill < Stock->User; fill++)
@@ -47,13 +54,14 @@ int MODE(int poll_fd, Stock *Stock)
 	}*/
 	if (user_check >= 0)
 	{
-		Stock->Flag[user_check] = Stock->line[2];
+		/*Stock->Flag[user_check] = Stock->line[2];
 		std::string tmp = Stock->line[2];
 		tmp += '\n';
 		if (send(poll_fd, static_cast<void *>(&tmp), tmp.size() + 1, 0) == -1)
-			perror("send: ");
+			perror("send: ");*/
+		MessageG(poll_fd, RPL_UMODEIS, ": " + Stock->line[2], Stock);
 		Stock->line.clear();
-		tmp.clear();
+		//tmp.clear();
 		return (1);
 	}
 	Stock->line.clear();

@@ -4,10 +4,10 @@
 */
 
 #include "../headers/User.hpp"
-//#include "../headers/error.hpp"
+#include "../headers/answer.hpp"
 // #include "../headers/Command.hpp"
 // #include "../headers/User.hpp"
-#include "../headers/tools.hpp"
+//#include "../headers/tools.hpp"
 // #include "../headers/Server.hpp"
 
 // bool    check_password( User &user, Stock *Stock)
@@ -26,7 +26,7 @@
 
 //     return false;
 // }
-
+/*
 User::User( void ) 
 {  
 	this->_fd = -1;
@@ -127,14 +127,32 @@ int USER(int poll_fd, Stock *Stock)
 	user.setServername(Stock->line[3]);
         user.setRealname(Stock->line[4]);
 	user.setIsSet(true);
-/*	std::cout << "Name is " << user.getUsername() << std::endl;
+	std::cout << "Name is " << user.getUsername() << std::endl;
 	std::cout << "Host is " << user.getHostname() << std::endl;
 	std::cout << "Server is " << user.getServername() << std::endl;
 	std::cout << "Realname is "<< user.getRealName() << std::endl;
-	std::cout << "set is " << user.getIsSet() << std::endl;*/
+	std::cout << "set is " << user.getIsSet() << std::endl;
 	Stock->tmp_user[Stock->User] = 1;
 //	std::cout << "user deep" << std::endl;
 	Stock->line.clear();
-//	exit(0);
-    return (0);
+//	exit(0);*/
+
+int USER(int poll_fd, Stock *Stock)
+{
+	int tmp = poll_fd;
+	tmp += 1;
+	if (Stock->authentified[Stock->User] == 1)
+	{
+		MessageG(poll_fd, ERR_ALREADYREGISTERED, ":Already registered", Stock);
+		Stock->line.clear();
+		return (1);	
+	}
+	for (size_t i = 1; i < Stock->line.size(); i++)
+	{
+		Stock->Users[Stock->User].push_back(Stock->line[i]);
+	//	std::cout << Stock->line[i] << std::endl;
+	}
+	Stock->tmp_user[Stock->User] = 1;
+	Stock->line.clear();
+	return (0);
 }

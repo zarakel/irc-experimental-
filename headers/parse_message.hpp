@@ -5,6 +5,7 @@
 
 int     command_check(int poll_fd, Stock *Stock);
 int     receive_message(int poll_fd, Stock *Stock);
+int	auth_check(int poll_fd, Stock *Stock);
 
 
 #endif
