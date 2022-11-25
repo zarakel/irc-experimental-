@@ -39,13 +39,17 @@ void MessageG(int fd, std::string numReply, std::string arg, Stock *Stock)
 		
 		if ( send(fd, &msg[0], msg.size(), 0) == -1 )
 			throw errorExcute(strerror(errno));
+		tmp.clear();
 		return;
 	}
-	s << ":ft_IRC " << numReply << " " << arg << "\n";
+	std::string tmp = ":Anonymous!Anonymous@127.0.0.1";
+	s << ":ft_IRC " << numReply << " " << "Anonymous"
+	<< " " << arg << "\n";
 
 	std::string msg = s.str();
 
 	if ( send(fd, &msg[0], msg.size(), 0) == -1 )
 		throw errorExcute(strerror(errno));
+	tmp.clear();
 
 }

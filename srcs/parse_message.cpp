@@ -323,7 +323,7 @@ int	receive_message(int poll_fd, Stock *Stock)
 	Stock->line.clear();
 //	if (send(poll_fd, "Bad command: Try better\n\r", 25, 0) == -1)
 //		perror("send: ");
-	MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad Usage", Stock);
+	MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad Usage", 0);
 	return(1);
 }
 
