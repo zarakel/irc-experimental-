@@ -132,6 +132,7 @@ int	command_check(int poll_fd, Stock *Stock)
 				}
 				return (1);
 			}
+
 			if (Stock->line[0] == Stock->all_commands[2]
 			&& Stock->line.size() == Stock->full_command["USER"].size()
 			&& Stock->tmp_pass[Stock->User] == 1)
@@ -311,7 +312,7 @@ int	receive_message(int poll_fd, Stock *Stock)
 	}
 //	command_check(poll_fd, Stock);
 	Stock->word.clear();
-	for (size_t c = 0; c <= Stock->all_commands.size(); c++) 
+	for (size_t c = 0; c < Stock->all_commands.size(); c++) 
 	{
 		if (Stock->line[0] == Stock->all_commands[c])
 		{

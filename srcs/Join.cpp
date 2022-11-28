@@ -128,23 +128,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 		//	std::cout << "yo = " << yo++ << std::endl;
 		//	std::cout << "Stock->User = " << Stock->User << std::endl;
 // On part du postulat qu'on a toujours le meme nombre d'info et que l'ordre desdonnées utilisateurs (ip, nick, user) n'a pas d'importance
-			if (Stock->Channels_Users
-			[Stock->Channels[i][0]][Stock->User] != 
-			Stock->Identities[Stock->User][0])
-			{
-		/*		if (send(poll_fd,
-				"JOIN (existing channel) complete\n\r", 34, 0)
-				== -1)
-					perror("send");*/
-				MessageG(poll_fd, RPL_TOPIC, " :" +
-				Stock->Channels[i][2] , Stock);
-				Stock->Channels_Users
-				[Stock->Channels[i][0]].push_back
-				(Stock->Identities[Stock->User][0]);
-		/*		std::cout << "Le dernier utilisateur est : " <<
-				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User] <<
-				std::endl;*/
-			}
+			
 		/*		it = -----------           BADLY DESIGNED
 				Stock->Channels_Users
 				[Stock->Channels[i][0]].size();
@@ -166,34 +150,49 @@ int	JOIN(int poll_fd, Stock * Stock)
 			if (send(poll_fd, static_cast<void *>(&tmp), tmp.length(), 0) == -1)
 				perror("send");
 			tmp.clear();*/
-			else if (Stock->Identities[Stock->User][0] == 
-			Stock->Channels_Users[Stock->Channels[i][0]][Stock->User])
+			for ( size_t z = 0;
+			z < Stock->Channels_Users[Stock->Channels[i][0]].size(); z++)
 			{
-				//std::cout << "yo = " << yo++ << std::endl;
-				if (send(poll_fd,
-				"You are already connected\n\r", 27, 0)
-				== -1)
-					perror("send");
-			}
+				if (Stock->Identities[Stock->User][0] == 
+				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User])
+				{
+					//Pas d'indication dans reponses numériques
+/*					if (send(poll_fd,
+					"You are already connected\n\r", 27, 0)
+					== -1)
+						perror("send");*/
+					MessageG(poll_fd, RPL_TOPIC, " :" +
+					Stock->Channels[i][2] , Stock);
+					break;
+				}
 
-			if (Stock->Channels[i][2].compare("\0") != 0)
-// 			Channels[i][1] == key
-// 			Channels[i][2] == topic 
-			{
-			/*	if (send(poll_fd, static_cast<void *>(&Stock->Channels[i][2]), Stock->Channels[i][2].length() - 1, 0) == -1)
-				if (send(poll_fd, "Topic opif\n\r", 12, 0)
+			/*	if (Stock->Channels[i][2].compare("\0") != 0)
+// 				Channels[i][1] == key
+// 				Channels[i][2] == topic 
+				{
+					if (send(poll_fd, static_cast<void *>(&Stock->Channels[i][2]), Stock->Channels[i][2].length() - 1, 0) == -1)
+					if (send(poll_fd, "Topic opif\n\r", 12, 0)
+					== -1)
+						perror("send");
+				}
+*/
+				else if (z + 1 == 
+				Stock->Channels_Users[Stock->Channels[i][0]].size())
+				{
+		/*		if (send(poll_fd,
+				"JOIN (existing channel) complete\n\r", 34, 0)
 				== -1)
 					perror("send");*/
-				MessageG(poll_fd, RPL_TOPIC, " :" +
-				Stock->Channels[i][2] , Stock);
-			}
-			else
-			{
-		/*		if (send(poll_fd, "RPL No Topic\r\n", 14,
-				0) == -1)
-					perror("send");*/
-				MessageG(poll_fd, RPL_TOPIC, " :" +
-				Stock->Channels[i][2] , Stock);
+					MessageG(poll_fd, RPL_TOPIC, ":" +
+					Stock->Channels[i][2] , Stock);
+					Stock->Channels_Users
+					[Stock->Channels[i][0]].push_back
+					(Stock->Identities[Stock->User][0]);
+					break;
+		/*		std::cout << "Le dernier utilisateur est : " <<
+				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User] <<
+				std::endl;*/
+				}
 			}
 			o++;
 			if (o == (int)tmp_Channel.size())

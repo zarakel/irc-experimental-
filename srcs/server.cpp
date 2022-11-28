@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/25 14:16:14 by juan             ###   ########.fr       */
+/*   Updated: 2022/11/28 18:08:05 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,9 +268,9 @@ int server(Stock *Stock)
 			}*/
 			if (recv(Stock->client_fd[i], NULL,1, MSG_PEEK | MSG_DONTWAIT) != 0)
 			{
+				Stock->User = i;
 				if (receive_message(Stock->client_fd[i], Stock) == 0)
 				{
-			//			std::cout << "fd after receive " << Stock->client_fd[i] << std::endl;
 					command_check(Stock->client_fd[i], Stock);
 				}
 			}
