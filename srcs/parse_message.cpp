@@ -93,6 +93,7 @@ int	command_check(int poll_fd, Stock *Stock)
 						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
 							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
 					}
+					Stock->Identities[Stock->User].push_back("non");
 				}
 				return (1);
 			}
@@ -134,6 +135,12 @@ int	command_check(int poll_fd, Stock *Stock)
 					MessageG(poll_fd, RPL_WELCOME,
 					"Welcome to the IRC" + tmp, Stock);
 					tmp.clear();
+					if (Stock->Channels.size() > 0)
+					{
+						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
+							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
+					}
+					Stock->Identities[Stock->User].push_back("non");
 				}
 				return (1);
 			}
@@ -169,11 +176,17 @@ int	command_check(int poll_fd, Stock *Stock)
 		//		<< std::endl;
 					std::string tmp = " :" +
 					Stock->Identities[Stock->User][0];
-        				tmp += "!" + Stock->Users[Stock->User][0] +
+        			tmp += "!" + Stock->Users[Stock->User][0] +
 					"@127.0.0.1";
 					MessageG(poll_fd, RPL_WELCOME,
 					"Welcome to the IRC" + tmp, Stock);
 					tmp.clear();
+					if (Stock->Channels.size() > 0)
+					{
+						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
+							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
+					}
+					Stock->Identities[Stock->User].push_back("non");
 				}
 				return (1);
 			}

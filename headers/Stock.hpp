@@ -24,7 +24,7 @@ class Stock
 	std::vector<std::string> Flag;
 
 	std::map<int, std::vector<std::string> > Channels; // le int correspond a l'ordre de création des channels
-//	[0] = nom de chan, [1] = key, [2] = topic
+//	[0] = nom de chan, [1] = key, [2] = topic, [3] = Mode
 
 	std::map<std::string, std::vector<std::string> > Channels_Users; // string fait reference a un nom de channel connu
 //  chaque instance du vector représente les utilisateurs qui y sont présents, par ordre de connexion
