@@ -30,6 +30,8 @@ class Stock
 //  chaque instance du vector représente les utilisateurs qui y sont présents, par ordre de connexion
 //	potentiellement, le [0] est d'office un operator ?
 
+	std::map<std::string, std::vector<int> > Channels_Op; // string fait reference a un nom de channel connu
+
 	std::map<int, std::vector<std::string> > Identities; // int correspond a l'ordre de connexion des clients
 //	[0] représente le Nick, les suivant peuvent représenter les informations de USER
 //	pet-être qu'on peut set le dernier pour le flag de mode ? 

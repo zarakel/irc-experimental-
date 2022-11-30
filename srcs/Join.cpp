@@ -188,6 +188,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 					Stock->Channels_Users
 					[Stock->Channels[i][0]].push_back
 					(Stock->Identities[Stock->User][0]);
+					Stock->Channels_Op[Stock->Channels[i][0]][Stock->User] = 0;
 					break;
 		/*		std::cout << "Le dernier utilisateur est : " <<
 				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User] <<
@@ -252,6 +253,15 @@ int	JOIN(int poll_fd, Stock * Stock)
 					Stock->Channels_Users
 					[Stock->Channels[i][0]].push_back
 					(Stock->Identities[Stock->User][0]);
+					for (int roll = 0; roll < (int)Stock->Identities.size(); roll++)
+					{
+						if (roll == Stock->User)
+						{
+							Stock->Channels_Op[Stock->Channels[i][0]].push_back(1);
+							roll++;
+						}
+						Stock->Channels_Op[Stock->Channels[i][0]].push_back(0);
+					}
 					Stock->Channel_Count++;
 					if (o + 1 < (int)tmp_Channel.size() )
 					{
@@ -345,6 +355,17 @@ int	JOIN(int poll_fd, Stock * Stock)
 			Stock->Channels_Users
 			[Stock->Channels[i][0]].push_back
 			(Stock->Identities[Stock->User][0]);
+			for (int roll = 0; roll < (int)Stock->Identities.size(); roll++)
+					{
+						if (roll == Stock->User)
+						{
+							Stock->Channels_Op[Stock->Channels[i][0]].push_back(1);
+							roll++;
+						//	std::cout << "yo" << std::endl;
+						}
+						Stock->Channels_Op[Stock->Channels[i][0]].push_back(0);
+					//	std::cout << "yo2" << std::endl;
+					}
 			Stock->Channel_Count++;
 		}
 	}

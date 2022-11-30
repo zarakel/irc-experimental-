@@ -88,6 +88,11 @@ int	command_check(int poll_fd, Stock *Stock)
 					MessageG(poll_fd, RPL_WELCOME,
 					"Welcome to the IRC" + tmp, Stock);
 					tmp.clear();
+					if (Stock->Channels.size() > 0)
+					{
+						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
+							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
+					}
 				}
 				return (1);
 			}
@@ -190,7 +195,7 @@ int	command_check(int poll_fd, Stock *Stock)
 				JOIN(poll_fd, Stock);
 				return (1);
 			}
-
+			
 //			std::cout << "le " << yo++ << std::endl;
 			else if (Stock->line[0] == Stock->all_commands[4]
 			&& Stock->line.size() == Stock->full_command["PRIVMSG"].size()
@@ -198,6 +203,20 @@ int	command_check(int poll_fd, Stock *Stock)
 			{
 //				std::cout << "inside privmsg " << yo++ << std::endl;
 				PRIVMSG(poll_fd, Stock);
+	/*			int a = 0;
+				for (size_t roll = 0; (size_t)a < Stock->Channels.size(); roll++)
+				{
+					std::cout << "a = " << a << std::endl;
+					std::cout << "channel size = " << Stock->Channels.size() << std::endl;
+					std::cout << "channel op size = " << Stock->Channels_Op[Stock->Channels[a][0]].size() << std::endl;
+ 					std::cout << "channel user size = " << Stock->Channels_Users[Stock->Channels[a][0]].size() << std::endl;
+					std::cout << "User " << roll << " is " << Stock->Channels_Op[Stock->Channels[a][0]][roll] << " on " << Stock->Channels[a][0] << std::endl;
+					if (roll + 1 == Stock->Channels_Users[Stock->Channels[a][0]].size())
+					{
+						roll = -1;
+						a++;
+					}
+				}*/
 				return (1);
 			}
 
@@ -210,7 +229,6 @@ int	command_check(int poll_fd, Stock *Stock)
 				MODE(poll_fd, Stock);
 				return (1);
 			}
-//			std::cout << "lp " << yo++ << std::endl;
 			
 //			std::cout << "coucou bl" << std::endl;*/
 /*			if (i == Stock->all_commands.size())
@@ -256,8 +274,8 @@ int	receive_message(int poll_fd, Stock *Stock)
 	}
 	for (int it = 0; ((buf[it] != '\n' | buf[it] != '\r') && it <= 512) ; it++)
 	{
-		if (buf[it] == ':' && (buf[it + 1] == ' ' | buf[it + 1] == '\n'
-			| buf[it + 1] == '\r'))
+		if (buf[it] == ':' && (buf[it + 1] == ' ' || buf[it + 1] == '\n'
+			|| buf[it + 1] == '\r'))
 		{
 			if (send(poll_fd, "Bad Message: Deux points, c'est zéro.\n\r", 39, 0) == -1)
 				perror("send");
@@ -324,7 +342,7 @@ int	receive_message(int poll_fd, Stock *Stock)
 	Stock->line.clear();
 //	if (send(poll_fd, "Bad command: Try better\n\r", 25, 0) == -1)
 //		perror("send: ");
-	MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad Usage", 0);
+	MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad Usage", Stock);
 	return(1);
 }
 
