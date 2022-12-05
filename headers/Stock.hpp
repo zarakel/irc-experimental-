@@ -32,10 +32,11 @@ class Stock
 
 	std::map<std::string, std::vector<int> > Channels_Op; // string fait reference a un nom de channel connu
 
-	std::map<int, std::vector<std::string> > Identities; // int correspond a l'ordre de connexion des clients
-//	[0] représente le Nick, les suivant peuvent représenter les informations de USER
-//	pet-être qu'on peut set le dernier pour le flag de mode ? 
+	std::map<std::string, std::vector<int> > Channels_Invite; // string fait reference a un nom de channel connu
 
+	std::map<int, std::vector<std::string> > Identities; // int correspond a l'ordre de connexion des clients
+//	[0] -> Nick;
+ 
 	std::map<int, std::vector<std::string> > Users;
 //      [0] -> Username; [1] -> Realname; [2] -> Hostname; [3] -> Servername;
 
@@ -51,7 +52,7 @@ class Stock
 	int	authentified[100];
 	int	client_fd[100];
 	int	User;
-	int	Channel_Count; // Channel_Count commencera par 1 pour dire qu'1 	channel a été crée, nous dit comebien de channels sont crées
+	int	Channel_Count; // Channel_Count commencera par 1 pour dire qu'1	channel a été crée, nous dit comebien de channels sont crées
 	int	User_Count; // Pareil qu'au dessus
 	int	fd_count;
 	int	sockfd;

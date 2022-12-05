@@ -35,7 +35,8 @@ HEADER_LIST		=
 
 SRC_LIST		= main.cpp Stock.cpp server.cpp parse_message.cpp \
 			passCmd.cpp nickCmd.cpp Join.cpp Privmsg.cpp \
-			tools.cpp userCmd.cpp answer.cpp Mode.cpp Ping.cpp
+			tools.cpp userCmd.cpp answer.cpp Mode.cpp Ping.cpp \
+			Kick.cpp Invite.cpp
 
 OBJ			= $(addprefix $(PATH_OBJS), $(SRC_LIST:.cpp=.o))
 

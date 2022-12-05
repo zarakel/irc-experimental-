@@ -184,23 +184,25 @@ int	JOIN(int poll_fd, Stock * Stock)
 				== -1)
 					perror("send");*/
 					if (Stock->Channels[i].size() == 3 ||
-					(Stock->Channels[i].size() == 4 && Stock->Channels[i][3].compare(+i)
-				    && Stock->Identities[Stock->User][1].compare("oui") == 0)
+					(Stock->Channels[i].size() == 4 &&
+					Stock->Channels[i][3].compare("+i") == 0 &&
+					Stock->Channels_Invite[Stock->Channels[i][0]]
+					[Stock->User] == 1))
 					{
 						MessageG(poll_fd, RPL_TOPIC, ":" +
 						Stock->Channels[i][2] , Stock);
 						Stock->Channels_Users
 						[Stock->Channels[i][0]].push_back
 						(Stock->Identities[Stock->User][0]);
-						Stock->Channels_Op[Stock->Channels[i][0]][Stock->User] = 0;
 						break;
 					}
 					else if (Stock->Channels[i].size() == 4
-					&& Stock->Channels[i][3].compare(+i)
-					&& Stock->Identities[Stock->User][1].compare("non") == 0)
+					&& Stock->Channels[i][3].compare("+i") == 0
+					&& Stock->Channels_Invite[Stock->Channels[i][0]]
+					[Stock->User] == 0)
 					{
-						MessageG(poll_fd, ERR_INVITEONLYCHAN, ":" +
-						"Bad Usage: Invite only Chan", Stock);
+						MessageG(poll_fd, ERR_INVITEONLYCHAN,
+						":Bad Usage: Invite only Chan", Stock);
 					}
 		/*		std::cout << "Le dernier utilisateur est : " <<
 				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User] <<
@@ -269,10 +271,18 @@ int	JOIN(int poll_fd, Stock * Stock)
 					{
 						if (roll == Stock->User)
 						{
-							Stock->Channels_Op[Stock->Channels[i][0]].push_back(1);
+							Stock->Channels_Op
+							[Stock->Channels[i][0]]
+							.push_back(1);
+							Stock->Channels_Invite
+							[Stock->Channels[i][0]]
+							.push_back(1);
 							roll++;
 						}
-						Stock->Channels_Op[Stock->Channels[i][0]].push_back(0);
+						Stock->Channels_Op[Stock->Channels[i][0]]
+						.push_back(0);
+						Stock->Channels_Invite
+						[Stock->Channels[i][0]].push_back(0);
 					}
 					Stock->Channel_Count++;
 					if (o + 1 < (int)tmp_Channel.size() )
@@ -371,11 +381,19 @@ int	JOIN(int poll_fd, Stock * Stock)
 					{
 						if (roll == Stock->User)
 						{
-							Stock->Channels_Op[Stock->Channels[i][0]].push_back(1);
+							Stock->Channels_Op
+							[Stock->Channels[i][0]].
+							push_back(1);
+							Stock->Channels_Invite
+							[Stock->Channels[i][0]].
+							push_back(1);
 							roll++;
 						//	std::cout << "yo" << std::endl;
 						}
-						Stock->Channels_Op[Stock->Channels[i][0]].push_back(0);
+						Stock->Channels_Op[Stock->Channels[i][0]]
+						.push_back(0);
+						Stock->Channels_Invite
+						[Stock->Channels[i][0]].push_back(0);
 					//	std::cout << "yo2" << std::endl;
 					}
 			Stock->Channel_Count++;

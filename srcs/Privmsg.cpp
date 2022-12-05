@@ -77,7 +77,7 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 		}
 	}
 
-	if (roll_c > 0)
+	if (roll_c > 0 && Stock->Channels.size() > 0)
 	{
 		for (size_t search = 0; search < size_c; search++) // boucle chan 
 		{
@@ -120,9 +120,9 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 //			std::cout << "Stock->client_fd[" << user_check << "] = " << Stock->client_fd[user_check] << std::endl;
 		for (size_t roll = 0; roll < (size_t)check_n; roll++)
 		{
-			tmp = Stock->Identities[Stock->User][0];
-			tmp += ": ";
-			tmp += Stock->line[2];
+			tmp = ':' + Stock->line[1] + ' ' + Stock->line[0];
+			tmp += ' ' + Stock->Identities[Stock->User][0];
+			tmp += " :" + Stock->line[2];
 			tmp += '\n';
 			size_t size = tmp.size();
 //			std::cout << tmp << " && size = " << size << std::endl;
@@ -180,15 +180,43 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 	int a = 0;
 	if (channel_check[0] >= 0)
 	{
-		while ( a < (int)tmp_chans.size())
+		for (size_t roll = 0; a <
+		(int)Stock->Channels.size(); roll++)
 		{
+			if (Stock->Identities[Stock->User][0] ==
+			Stock->Channels_Users[tmp_chans[a]][roll])
+			{
+				break;
+			}
+			else if ( roll + 1 ==
+			Stock->Channels_Users[tmp_chans[a]].size() &&
+			a + 1 < (int)tmp_chans.size())
+			{
+				a++;
+				roll = -1;
+			}
+			else if  ( roll + 1 ==
+			Stock->Channels_Users[tmp_chans[a]].size() &&
+			a + 1 == (int)tmp_chans.size())
+			{
+				MessageG(poll_fd, ERR_CANNOTSENDTOCHAN,
+				"Bad Usage: You're not in the channel", Stock);
+				tmp.clear();
+				tmp_nicks.clear();
+				tmp_chans.clear();
+				Stock->line.clear();
+				return (1);
+			}
+		}
+		while ( a < (int)tmp_chans.size())
+		{		
 			for (size_t roll = 0; roll <
 			(size_t)Stock->Channels_Users[tmp_chans[a]].size(); roll++)
 			{
-				tmp = Stock->Identities[Stock->User][0];
-				tmp += ": ";
-				tmp += Stock->line[2];
-				tmp += '\n';
+				tmp = ':' + Stock->line[1] + ' ';
+				tmp += Stock->line[0] + ' ';
+				tmp += Stock->Identities[Stock->User][0];
+				tmp += " :" + Stock->line[2] + '\n';
 				size_t size = tmp.size();
 //		std::cout << tmp << " && size = " << size << std::endl;
 /*		if (send(Stock->client_fd[user_check], static_cast<void *>(&tmp), size - 1, 0) == -1)

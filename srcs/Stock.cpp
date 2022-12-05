@@ -69,8 +69,15 @@ void Stock::Init_Values( int argc, char **argv )
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
-	
 	tmp = "PING"; // Stock->all_commands[6]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	tmp = "KICK"; // Stock->all_commands[7]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	tmp = "INVITE"; // Stock->all_commands[7]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
@@ -112,6 +119,16 @@ void Stock::Init_Values( int argc, char **argv )
 	this->full_command["PING"].push_back("PING");
 	this->full_command["PING"].push_back("\0");
 	this->full_command["PING"].push_back("\0");
+
+	this->full_command["KICK"].push_back("KICK");
+	this->full_command["KICK"].push_back("\0");
+	this->full_command["KICK"].push_back("\0");
+	this->full_command["KICK"].push_back("\0");
+
+	this->full_command["INVITE"].push_back("INVITE");
+	this->full_command["INVITE"].push_back("\0");
+	this->full_command["INVITE"].push_back("\0");
+	this->full_command["INVITE"].push_back("\0");
 
 	this->User = 0;
 	this->User_Count = 0;

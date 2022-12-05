@@ -90,10 +90,17 @@ int	command_check(int poll_fd, Stock *Stock)
 					tmp.clear();
 					if (Stock->Channels.size() > 0)
 					{
-						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
-							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
+						for (size_t roll = 0; roll <
+						Stock->Channels.size(); roll++)
+						{
+							Stock->Channels_Op
+							[Stock->Channels[roll][0]].
+							push_back(0);
+							Stock->Channels_Invite
+							[Stock->Channels[roll][0]].
+							push_back(0);
+						}
 					}
-					Stock->Identities[Stock->User].push_back("non");
 				}
 				return (1);
 			}
@@ -137,10 +144,17 @@ int	command_check(int poll_fd, Stock *Stock)
 					tmp.clear();
 					if (Stock->Channels.size() > 0)
 					{
-						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
-							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
+						for (size_t roll = 0; roll <
+						Stock->Channels.size(); roll++)
+						{
+							Stock->Channels_Op
+							[Stock->Channels[roll][0]].
+							push_back(0);
+							Stock->Channels_Invite
+							[Stock->Channels[roll][0]].
+							push_back(0);
+						}
 					}
-					Stock->Identities[Stock->User].push_back("non");
 				}
 				return (1);
 			}
@@ -183,10 +197,17 @@ int	command_check(int poll_fd, Stock *Stock)
 					tmp.clear();
 					if (Stock->Channels.size() > 0)
 					{
-						for (size_t roll = 0; roll < Stock->Channels.size(); roll++)
-							Stock->Channels_Op[Stock->Channels[roll][0]].push_back(0);
+						for (size_t roll = 0; roll <
+						Stock->Channels.size(); roll++)
+						{
+							Stock->Channels_Op
+							[Stock->Channels[roll][0]].
+							push_back(0);
+							Stock->Channels_Invite
+							[Stock->Channels[roll][0]].
+							push_back(0);
+						}
 					}
-					Stock->Identities[Stock->User].push_back("non");
 				}
 				return (1);
 			}
@@ -242,7 +263,27 @@ int	command_check(int poll_fd, Stock *Stock)
 				MODE(poll_fd, Stock);
 				return (1);
 			}
-			
+
+			else if (Stock->line[0] == Stock->all_commands[7]
+			&& Stock->line.size() == Stock->full_command["KICK"].size()
+			&& auth_check(poll_fd, Stock))
+			{
+		//		std::cout << "inside mode" << std::endl;
+				KICK(poll_fd, Stock);
+		//		for (int c = 0; c < (int)Stock->Channels.size(); c++)
+		//			std::cout << "c = " << c << " && " << Stock->Channels[c][0] << std::endl;
+				return (1);
+			}
+
+			else if (Stock->line[0] == Stock->all_commands[8]
+			&& Stock->line.size() == Stock->full_command["INVITE"].size()
+			&& auth_check(poll_fd, Stock))
+			{
+		//		std::cout << "inside mode" << std::endl;
+				INVITE(poll_fd, Stock);
+				return (1);
+			}
+
 //			std::cout << "coucou bl" << std::endl;*/
 /*			if (i == Stock->all_commands.size())
 			{

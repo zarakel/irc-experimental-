@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/11/28 18:08:05 by juan             ###   ########.fr       */
+/*   Updated: 2022/12/01 09:31:14 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,18 @@ int Check_FD(Stock *Stock)
 	//			std::cout << "User is " << i << std::endl;
 			if (recv(Stock->client_fd[i], NULL,1, MSG_PEEK | MSG_DONTWAIT) == 0)
 			{	
-				for (int a = 0; Stock->Channel_Count > 0 && a < Stock->Channel_Count; a++)
-					Stock->Channels_Users[Stock->Channels[a][0]][i].clear();
+				for (int a = 0; Stock->Channel_Count > 0 &&
+				a < Stock->Channel_Count; a++)
+				{
+					Stock->Channels_Users[Stock->Channels[a][0]][i].
+					clear();
+					Stock->Channels_Users[Stock->Channels[a][0]][i].
+					resize(0);
+					Stock->Channels_Invite[Stock->Channels[a][0]][i]
+					= 0;
+					Stock->Channels_Op[Stock->Channels[a][0]][i]
+					= 0;
+				}
 				if (Stock->Identities.size() > 0)
 				{
 					Stock->Identities[i].clear();
@@ -81,6 +91,8 @@ int Check_FD(Stock *Stock)
 				Stock->tmp_pass[i] = 0;
 				Stock->tmp_nick[i] = 0;
 				Stock->tmp_user[i] = 0;
+		//		if (Stock->authentified[i] == 1)
+		//		{
 				Stock->authentified[i] = 0;
 //				std::cout << "héhé boy " << i << std::endl;
 				close(Stock->client_fd[i]);

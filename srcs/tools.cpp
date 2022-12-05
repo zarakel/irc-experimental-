@@ -30,3 +30,21 @@ void    ft_split(std::string &in, char *delimiter, std::vector<std::string> &out
         token = strtok(NULL, delimiter);
 	}
 }
+
+std::vector<std::string>                ft_split(std::string str, std::string sep)
+{
+
+        std::vector<std::string>        res;
+        std::string                     tok;
+
+        size_t     start = 0;
+        size_t     end = str.find(sep);
+        while (end != std::string::npos)
+        {
+                res.push_back(str.substr(start, end - start));
+                start = end + sep.length();
+                end = str.find(sep, start);
+        }
+        res.push_back(str.substr(start, end - start));
+        return res;
+}
