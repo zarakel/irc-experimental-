@@ -265,7 +265,10 @@ int	command_check(int poll_fd, Stock *Stock)
 			}
 
 			else if (Stock->line[0] == Stock->all_commands[7]
-			&& Stock->line.size() == Stock->full_command["KICK"].size()
+			&& (Stock->line.size() ==
+			Stock->full_command["KICK"].size() ||
+			Stock->line.size() ==
+			Stock->full_command["KICK"].size() + 1)
 			&& auth_check(poll_fd, Stock))
 			{
 		//		std::cout << "inside mode" << std::endl;
@@ -276,11 +279,24 @@ int	command_check(int poll_fd, Stock *Stock)
 			}
 
 			else if (Stock->line[0] == Stock->all_commands[8]
-			&& Stock->line.size() == Stock->full_command["INVITE"].size()
+			&& (Stock->line.size() ==
+			Stock->full_command["INVITE"].size() ||
+			Stock->line.size() ==
+			Stock->full_command["INVITE"].size() + 1)
 			&& auth_check(poll_fd, Stock))
 			{
 		//		std::cout << "inside mode" << std::endl;
 				INVITE(poll_fd, Stock);
+				return (1);
+			}
+
+			
+			else if (Stock->line[0] == Stock->all_commands[9]
+			&& Stock->line.size() == Stock->full_command["PART"].size()
+			&& auth_check(poll_fd, Stock))
+			{
+		//		std::cout << "inside mode" << std::endl;
+				PART(poll_fd, Stock);
 				return (1);
 			}
 

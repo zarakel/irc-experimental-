@@ -154,7 +154,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 			z < Stock->Channels_Users[Stock->Channels[i][0]].size(); z++)
 			{
 				if (Stock->Identities[Stock->User][0] == 
-				Stock->Channels_Users[Stock->Channels[i][0]][Stock->User])
+				Stock->Channels_Users[Stock->Channels[i][0]][z])
 				{
 					//Pas d'indication dans reponses numériques
 /*					if (send(poll_fd,
@@ -163,6 +163,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 						perror("send");*/
 					MessageG(poll_fd, RPL_TOPIC, " :" +
 					Stock->Channels[i][2] , Stock);
+					std::cout << "yo" << std::endl;
 					break;
 				}
 
@@ -194,6 +195,11 @@ int	JOIN(int poll_fd, Stock * Stock)
 						Stock->Channels_Users
 						[Stock->Channels[i][0]].push_back
 						(Stock->Identities[Stock->User][0]);
+						for (size_t o = 0; o < Stock->Channels_Users[Stock->Channels[i][0]].size(); o++)
+						{
+							std::cout << "User[" << o << "] is " << std::endl;
+							std::cout << Stock->Channels_Users[Stock->Channels[i][0]][o] << std::endl;
+						}
 						break;
 					}
 					else if (Stock->Channels[i].size() == 4

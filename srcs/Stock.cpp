@@ -77,7 +77,11 @@ void Stock::Init_Values( int argc, char **argv )
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
-	tmp = "INVITE"; // Stock->all_commands[7]
+	tmp = "INVITE"; // Stock->all_commands[8]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	tmp = "PART"; // Stock->all_commands[9]
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
@@ -129,6 +133,11 @@ void Stock::Init_Values( int argc, char **argv )
 	this->full_command["INVITE"].push_back("\0");
 	this->full_command["INVITE"].push_back("\0");
 	this->full_command["INVITE"].push_back("\0");
+
+
+	this->full_command["PART"].push_back("PART");
+	this->full_command["PART"].push_back("\0");
+	this->full_command["PART"].push_back("\0");
 
 	this->User = 0;
 	this->User_Count = 0;

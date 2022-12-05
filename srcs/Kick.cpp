@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/02 13:31:27 by juan              #+#    #+#             */
-/*   Updated: 2022/12/02 17:06:50 by juan             ###   ########.fr       */
+/*   Updated: 2022/12/05 18:33:26 by juan             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,14 @@ int KICK(int poll_fd, Stock *Stock)
 	{
             MessageG( poll_fd, ERR_NOSUCHCHANNEL, channels, Stock);
 		check = 0;
+		std::cout << "la" << std::endl;
 	}
         //if channel doesnt exit
         if (Stock->authentified[Stock->User] == 0)
 	{
             MessageG( poll_fd, ERR_NOTREGISTERED, ":You have not registered", Stock);
 		check = 0;
+		std::cout << "li" << std::endl;
 	}
         //if user isnt on channel
 	
@@ -110,6 +112,7 @@ int KICK(int poll_fd, Stock *Stock)
 		{
                    MessageG( poll_fd, ERR_CHANOPRIVSNEEDED, channels, Stock);
 			check = 0;
+		std::cout << "lo" << std::endl;
 		}
                 //test//
                	break;
@@ -118,6 +121,7 @@ int KICK(int poll_fd, Stock *Stock)
 		{
                 	MessageG( poll_fd, ERR_NOTONCHANNEL, channels, Stock);
 			check = 0;
+		std::cout << "le" << std::endl;
 		}
         
        } 
@@ -146,6 +150,7 @@ int KICK(int poll_fd, Stock *Stock)
 				check = 0;
 			}*/
                 	victim.push_back(toKick[a]);
+			std::cout << victim[0] << std::endl;
 		}
             // if victim is not a valid nick
 			// if victim is not on channel
@@ -153,7 +158,9 @@ int KICK(int poll_fd, Stock *Stock)
 		&& victim.size() == 0)
         	{
 			MessageG( poll_fd, ERR_NOTONCHANNEL, channels, Stock );
+			std::cout << "victim size is " << victim.size() << std::endl;
 			check = 0;
+			std::cout << "ly" << std::endl;
 			break;
 		}
 
@@ -175,6 +182,12 @@ int KICK(int poll_fd, Stock *Stock)
 	*/
 	if (check == 0)
 	{
+		std::cout << "kilukru" << std::endl;
+		channels.clear();
+		comment.clear();
+		chl.clear();
+		victim.clear();
+		toKick.clear();
        		Stock->line.clear(); 
 		return (0);
 	}
@@ -248,18 +261,21 @@ int KICK(int poll_fd, Stock *Stock)
 			//	Stock->Channels_Users[channels[z]][roll].resize(0);
 		//		it = Stock->Channels_Users[channels[z]][roll];
 				std::cout << "Channels_users size = " << Stock->Channels_Users.size() << std::endl;
+				std::cout << "CHannels_users[" << channels << "] size = " << Stock->Channels_Users[channels].size() << std::endl;
 				int check_del = 0;
 				int check_op = 0;
-				if (Stock->Channels_Users[channels].size() > 1 &&
-				Stock->Channels_Op[channels][roll] == 1)
+				if (Stock->Channels_Users[channels].size() > 1
+				&& roll == 0)
 					check_op = 1;
 				if (Stock->Channels_Users[channels].size() > 0)
 				{
 					if (Stock->Channels_Users[channels].size() == 1)
 						check_del = 1;
+					std::cout << "it is " << *it << std::endl;
 					Stock->Channels_Users[channels].erase(it);
 					if (check_op == 1)
 					{
+						std::cout << "incheckop" << std::endl;
 						Stock->Channels_Op[channels]
 						[Stock->User] = 0;
 						for (size_t a = 0; a <
@@ -271,8 +287,9 @@ int KICK(int poll_fd, Stock *Stock)
 						}	
 					}
 				}
-				std::cout << "User[" << 0 <<"] = " << Stock->Channels_Users[channels][0] << " && chan is " << channels << std::endl;
+				std::cout << "User[" << roll <<"] = " << Stock->Channels_Users[channels][roll] << " && chan is " << channels << std::endl;
 				std::cout << "CHannels_users size = " << Stock->Channels_Users.size() << std::endl;
+				std::cout << "CHannels_users[" << channels << "] size = " << Stock->Channels_Users[channels].size() << std::endl;
 				if ((check_del = 1 ||
 				roll + 1 == Stock->Channels_Users[channels].size()))
 			//	&& z + 1 < (int)channels.size())
