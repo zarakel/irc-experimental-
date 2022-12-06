@@ -85,6 +85,14 @@ void Stock::Init_Values( int argc, char **argv )
 	this->all_commands.push_back(tmp);
 	tmp.clear();
 
+	tmp = "QUIT"; // Stock->all_commands[10]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
+	tmp = "TOPIC"; // Stock->all_commands[11]
+	this->all_commands.push_back(tmp);
+	tmp.clear();
+
 	this->full_command["PASS"].push_back("PASS");
 	this->full_command["PASS"].push_back("\0");
 	this->full_command["PASS"].push_back("\0");
@@ -134,10 +142,15 @@ void Stock::Init_Values( int argc, char **argv )
 	this->full_command["INVITE"].push_back("\0");
 	this->full_command["INVITE"].push_back("\0");
 
-
 	this->full_command["PART"].push_back("PART");
 	this->full_command["PART"].push_back("\0");
 	this->full_command["PART"].push_back("\0");
+
+	this->full_command["QUIT"].push_back("QUIT");
+	this->full_command["QUIT"].push_back("\0");
+
+	this->full_command["TOPIC"].push_back("TOPIC");
+	this->full_command["TOPIC"].push_back("\0");
 
 	this->User = 0;
 	this->User_Count = 0;

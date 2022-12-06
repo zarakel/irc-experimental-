@@ -55,8 +55,8 @@ int	command_check(int poll_fd, Stock *Stock)
 				PING(poll_fd, Stock);
 				return (0);
 			}
-			if (Stock->line[0] == Stock->all_commands[0]
-			&& Stock->line.size() == Stock->full_command["PASS"].size())
+			if (Stock->line[0] == Stock->all_commands[0])
+		//	&& Stock->line.size() == Stock->full_command["PASS"].size())
 			{
 //				std::cout << "inside pass " << std::endl;
 				PASS(poll_fd, Stock);
@@ -107,7 +107,7 @@ int	command_check(int poll_fd, Stock *Stock)
 	//		Stock->tmp_authentified[Stock->User] = 1;
 //			std::cout << "lo " << yo++ << std::endl;
 			if (Stock->line[0] == Stock->all_commands[1]
-			&& Stock->line.size() == Stock->full_command["NICK"].size()
+		//	&& Stock->line.size() == Stock->full_command["NICK"].size()
 			&& Stock->tmp_pass[Stock->User] == 1)
 	//		&& (Stock->tmp_authentified[Stock->User] == 1
 	//		| Stock->authentified[Stock->User] == 1))
@@ -158,14 +158,12 @@ int	command_check(int poll_fd, Stock *Stock)
 				}
 				return (1);
 			}
-
 			if (Stock->line[0] == Stock->all_commands[2]
-			&& Stock->line.size() == Stock->full_command["USER"].size()
+		/*	&& Stock->line.size() == Stock->full_command["USER"].size()*/
 			&& Stock->tmp_pass[Stock->User] == 1)
 //			&& (Stock->tmp_authentified[Stock->User] == 2
 //			| Stock->authentified[Stock->User] == 1))
 			{
-//				std::cout << "inside user" << std::endl;
 				USER(poll_fd, Stock);
 //				std::cout << "user before check" << std::endl;
 //				std::cout << "user is " << Stock->User <<  std::endl;
@@ -218,12 +216,12 @@ int	command_check(int poll_fd, Stock *Stock)
 			
 
 //			std::cout << "la " << yo++ << std::endl;
-			else if ((Stock->line[0] == Stock->all_commands[3]
-			&& Stock->line.size() == Stock->full_command["JOIN"].size() - 1
+			else if (Stock->line[0] == Stock->all_commands[3]
+		/*	&& Stock->line.size() == Stock->full_command["JOIN"].size() - 1
 			&& auth_check(poll_fd, Stock)) ||
 			(Stock->line[0] == Stock->all_commands[3]
-			&& Stock->line.size() == Stock->full_command["JOIN"].size()
-			&& auth_check(poll_fd, Stock)))
+			&& Stock->line.size() == Stock->full_command["JOIN"].size()*/
+			&& auth_check(poll_fd, Stock))
 			{
 //				std::cout << "inside join " << yo++ << std::endl;
 				JOIN(poll_fd, Stock);
@@ -232,7 +230,7 @@ int	command_check(int poll_fd, Stock *Stock)
 			
 //			std::cout << "le " << yo++ << std::endl;
 			else if (Stock->line[0] == Stock->all_commands[4]
-			&& Stock->line.size() == Stock->full_command["PRIVMSG"].size()
+		//	&& Stock->line.size() == Stock->full_command["PRIVMSG"].size()
 			&& auth_check(poll_fd, Stock))
 			{
 //				std::cout << "inside privmsg " << yo++ << std::endl;
@@ -297,6 +295,26 @@ int	command_check(int poll_fd, Stock *Stock)
 			{
 		//		std::cout << "inside mode" << std::endl;
 				PART(poll_fd, Stock);
+				return (1);
+			}
+
+			else if (Stock->line[0] == Stock->all_commands[10]
+			&& (Stock->line.size() == Stock->full_command["QUIT"].size()
+			|| Stock->line.size() == Stock->full_command["QUIT"].size() + 1)
+			&& auth_check(poll_fd, Stock))
+			{
+		//		std::cout << "inside mode" << std::endl;
+				QUIT(poll_fd, Stock);
+				return (1);
+			}
+
+			else if (Stock->line[0] == Stock->all_commands[11]
+		/*	&& (Stock->line.size() == Stock->full_command["QUIT"].size()
+			|| Stock->line.size() == Stock->full_command["QUIT"].size() + 1)*/
+			&& auth_check(poll_fd, Stock))
+			{
+		//		std::cout << "inside mode" << std::endl;
+				TOPIC(poll_fd, Stock);
 				return (1);
 			}
 
@@ -410,8 +428,8 @@ int	receive_message(int poll_fd, Stock *Stock)
 		}
 	}
 	Stock->line.clear();
-//	if (send(poll_fd, "Bad command: Try better\n\r", 25, 0) == -1)
-//		perror("send: ");
+	if (send(poll_fd, "Bad command: Try better\n\r", 25, 0) == -1)
+		perror("send: ");
 	MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad Usage", Stock);
 	return(1);
 }

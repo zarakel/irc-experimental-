@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 11:32:46 by juan              #+#    #+#             */
-/*   Updated: 2022/12/01 09:31:14 by juan             ###   ########.fr       */
+/*   Updated: 2022/12/06 13:21:45 by jbuan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,15 @@ int Check_FD(Stock *Stock)
 				}
 				if (Stock->Identities.size() > 0)
 				{
-					Stock->Identities[i].clear();
-					Stock->Identities[i].resize(0);
+					/*Stock->Identities[i].clear();
+					Stock->Identities[i].resize(0);*/
+					Stock->Identities.erase(i);
 				}
 				if (Stock->Users.size() > 0)
 				{
-					Stock->Users[i].clear();
-					Stock->Users[i].resize(0);
+					/*Stock->Users[i].clear();
+					Stock->Users[i].resize(0);*/
+					Stock->Users.erase(i);
 				}
 //				if (Stock->Nicks.size() > 0)
 //					Stock->Nicks[i] = "\0";

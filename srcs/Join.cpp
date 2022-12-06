@@ -11,11 +11,44 @@ int	JOIN(int poll_fd, Stock * Stock)
 	int	o = 0;
 	//int	tmp_Channel_Check[10];
 
+	std::cout << "Line size is " << Stock->line.size() << std::endl;
+	std::cout << "full command size is " << Stock->full_command["JOIN"].size() << std::endl;
+/*	if (Stock->line.size() == 3)
+	{
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Not enough parameters", Stock);
+		Stock->line.clear();
+		return (1);
+	}*/
+
+	if (Stock->line.size() == 4 && (Stock->line.size() <
+	Stock->full_command["JOIN"].size() || Stock->line.size() >
+	Stock->full_command["JOIN"].size()))
+	{
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Not the good amount of parameters", Stock);
+		Stock->line.clear();
+		return (1);
+	}
+
+	else if (Stock->line.size() >= 5 && (Stock->line.size() <
+	Stock->full_command["JOIN"].size() + 1 || Stock->line.size() >
+	Stock->full_command["JOIN"].size()) + 1)
+	{
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Not the good amount of parameters", Stock);
+		Stock->line.clear();
+		return (1);
+	}
+
+	if (Stock->line.size() == 2)
+	{
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Channel is empty", Stock);
+		Stock->line.clear();
+		return (0);
+	}
 // vérif si le 1er caractère est conforme
 	if (Stock->line[1][0] != '#' && Stock->line[1][0] != '&' &&
 		Stock->line[1][0] != '+' && Stock->line[1][0] != '!')
 	{
-		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad channel prefix", Stock);
 		Stock->line.clear();
 		return (0);
 	}
@@ -23,7 +56,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 // vérif si la ligne est plus grande que 50 caracteres
 	if (Stock->line.size() > 50)
 	{
-		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":More than 50 characters", Stock);
 		Stock->line.clear();
 		return (0);
 	}
@@ -35,7 +68,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 		{
 		//	if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
 		//		perror("send");
-			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
+			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Chan name contain wrong characters", Stock);
 			Stock->line.clear();
 			return (0);
 		}
@@ -59,7 +92,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 		{
 		//	if (send(poll_fd, "Bad Param: chan name contain wrong characters\r\n", 48, 0) == -1)
 		//		perror("send");
-			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
+			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Chan name contain wrong characters", Stock);
 			Stock->line.clear();
 			return (0);
 		}
@@ -77,7 +110,7 @@ int	JOIN(int poll_fd, Stock * Stock)
 		{
 		/*	if (send(poll_fd, "Bad Param: key contain wrong characters\r\n", 41, 0) == -1)
 				perror("send");*/
-			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Bad usage", Stock);
+			MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Key contain wrong characters", Stock);
 			Stock->line.clear();
 			return (0);
 		}
@@ -161,9 +194,9 @@ int	JOIN(int poll_fd, Stock * Stock)
 					"You are already connected\n\r", 27, 0)
 					== -1)
 						perror("send");*/
-					MessageG(poll_fd, RPL_TOPIC, " :" +
+					MessageG(poll_fd, RPL_TOPIC, "is already on channel [" +
+					Stock->Channels[i][0] + "] : " +
 					Stock->Channels[i][2] , Stock);
-					std::cout << "yo" << std::endl;
 					break;
 				}
 
@@ -190,7 +223,8 @@ int	JOIN(int poll_fd, Stock * Stock)
 					Stock->Channels_Invite[Stock->Channels[i][0]]
 					[Stock->User] == 1))
 					{
-						MessageG(poll_fd, RPL_TOPIC, ":" +
+						MessageG(poll_fd, RPL_TOPIC, "has joined channel [" +
+						Stock->Channels[i][0] + "] :" +
 						Stock->Channels[i][2] , Stock);
 						Stock->Channels_Users
 						[Stock->Channels[i][0]].push_back
@@ -267,8 +301,8 @@ int	JOIN(int poll_fd, Stock * Stock)
 						perror("send");
 					if (send(poll_fd, "RPL No Topic\r\n", 14, 0) == -1)
 						perror("send");*/
-					MessageG(poll_fd, RPL_TOPIC, " :" +
-					Stock->Channels[i][2] , Stock);
+					MessageG(poll_fd, RPL_TOPIC, ": New Channel [" +
+					Stock->Channels[i][0]+ "] Created" + Stock->Channels[i][2] , Stock);
 		//     mis a jour des données utilisateurs
 					Stock->Channels_Users
 					[Stock->Channels[i][0]].push_back
@@ -378,7 +412,10 @@ int	JOIN(int poll_fd, Stock * Stock)
 				perror("send");*/
 			
 			//std::cout << "yo = " << yo++ << std::endl;
-			MessageG(poll_fd, RPL_TOPIC, " :" +
+	/*		MessageG(poll_fd, RPL_TOPIC, " :" +
+			Stock->Channels[i][2] , Stock);*/
+			MessageG(poll_fd, RPL_TOPIC, "has joined channel [" +
+			Stock->Channels[i][0] + "] :" +
 			Stock->Channels[i][2] , Stock);
 			Stock->Channels_Users
 			[Stock->Channels[i][0]].push_back

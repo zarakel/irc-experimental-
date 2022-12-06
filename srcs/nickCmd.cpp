@@ -7,6 +7,7 @@ int	NICK(int poll_fd, Stock *Stock)
 //	int yo = 0;
 	std::string upper;
 	std::string lower;
+	std::string tmp;
 
 // essai pour rendre nick case insensitive
 
@@ -15,6 +16,15 @@ int	NICK(int poll_fd, Stock *Stock)
 		if (Stock->line[1][i] >= 97 && Stock->line[1][i] <= 122)
 			
 	}*/
+
+	if (Stock->line.size() < Stock->full_command["NICK"].size() ||
+    Stock->line.size() > Stock->full_command["NICK"].size())
+    {
+        MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Not the good amount of parameters", Stock);
+        Stock->line.clear();
+        return (1);
+    }
+
 	if (Stock->line[1].length() > 0 && Stock->line[2].empty()
 	&& Stock->Identities.size() > 0)
 	{
@@ -41,22 +51,30 @@ int	NICK(int poll_fd, Stock *Stock)
 		Stock->Identities[Stock->User].push_back(Stock->line[1]);
 		Stock->Nicks.push_back(Stock->line[1]);
 	//	std::cout << yo++ << std::endl;
-//		if (send(poll_fd, "All Good: Your nick is set !\n\r", 29, 0) == -1)
-//			perror("send");
+		if (send(poll_fd, "Your nick is set !\n\r", 19, 0) == -1)
+			perror("send");
 		Stock->line.clear();
 		Stock->nick_already_set[Stock->User] = 1;
 		Stock->tmp_nick[Stock->User] = 1;
-		return (20);
+		return (1);
 	}
 	else if (Stock->line[1].length() > 0 && Stock->line[2].empty() 
 	&& Stock->Identities[Stock->User][0].empty() == 0
 	&& Stock->Identities[Stock->User][0].compare(Stock->line[1]) != 0)
 	{
+		tmp = Stock->Identities[Stock->User][0];
+		tmp += " has changed his nickname to ";
+		tmp += Stock->line[1] + '\n';
 		Stock->Identities[Stock->User][0] = Stock->line[1];
 		Stock->Nicks[Stock->User].clear();
 		Stock->Nicks[Stock->User] = Stock->line[1];
+		for (size_t c = 0; c < tmp.size(); c++)
+		{
+			if (send(poll_fd, &tmp[c], 1, 0) == -1)
+				perror("send :");
+		}
 		Stock->line.clear();
-		return (60);
+		return (1);
 	}
 	else if (Stock->line[1].length() > 0 && Stock->line[2].empty() 
 	&& Stock->Identities[Stock->User][0].compare(Stock->line[1]) == 0)
@@ -64,7 +82,7 @@ int	NICK(int poll_fd, Stock *Stock)
 		MessageG(poll_fd, ERR_NICKNAMEINUSE, ":Nick used",
 		Stock);
 		Stock->line.clear();
-		return (76);
+		return (0);
 	}
 // Peut etre ajouter sécu
 /*	else

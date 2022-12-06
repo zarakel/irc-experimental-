@@ -6,7 +6,7 @@
 /*   By: juan <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/02 13:31:27 by juan              #+#    #+#             */
-/*   Updated: 2022/12/05 18:33:26 by juan             ###   ########.fr       */
+/*   Updated: 2022/12/06 11:08:28 by jbuan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,9 +208,11 @@ int KICK(int poll_fd, Stock *Stock)
 					Stock->Identities[z][0] ==
 					Stock->Channels_Users[channels][y])
 					{
-						MessageG(Stock->client_fd[z++],
+					//	MessageG(Stock->client_fd[z++],
+						MessageG(Stock->client_fd[z],
 						channels + " " + victim[a] + " " +
 						comment, "have been Kicked !", Stock);
+						Stock->Channels_Invite[channels][z] = 0;
 					}
 				/*	if (y + 1 == (int)Stock->Channels_Users
 					[channels].size() && b + 1 < channels.size())

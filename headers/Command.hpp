@@ -13,6 +13,8 @@ int		PING(int poll_fd, Stock *Stock);
 int		KICK(int poll_fd, Stock *Stock);
 int		INVITE(int poll_fd, Stock *Stock);
 int		PART(int poll_fd, Stock *Stock);
+int		QUIT(int poll_fd, Stock *Stock);
+int		TOPIC(int poll_fd, Stock *Stock);
 
 
 #endif

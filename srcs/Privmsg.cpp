@@ -20,6 +20,15 @@ int PRIVMSG(int poll_fd, Stock *Stock)
 
 	user_check[0] = -1;
 	channel_check[0] = -1;
+
+	if (Stock->line.size() < Stock->full_command["PRIVMSG"].size() ||
+	Stock->line.size() > Stock->full_command["PRIVMSG"].size())
+	{
+		MessageG(poll_fd, ERR_NEEDMOREPARAMS, ":Not the good amount of parameters", Stock);
+		Stock->line.clear();
+		return (1);
+	}
+
 	for (size_t c = 0; c < Stock->line[1].size(); c++)
 	{
 		if (Stock->line[1][c] == ',')
